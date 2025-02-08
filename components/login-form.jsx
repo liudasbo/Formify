@@ -16,14 +16,20 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { t } from "i18next";
 
 const formSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().email(t("invalidEmail")),
+  password: z.string().min(1, t("passwordRequired")),
 });
 
 export function LoginForm({ className, ...props }) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const {
     register,
@@ -35,6 +41,8 @@ export function LoginForm({ className, ...props }) {
   });
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
+
     const signInData = await signIn("credentials", {
       email: data.email,
       password: data.password,
@@ -43,28 +51,26 @@ export function LoginForm({ className, ...props }) {
 
     if (signInData.error) {
       console.log(signInData.error);
+      setError("form", { message: t("loginForm.invalidCredentials") });
+      setIsLoading(false);
     } else {
       router.push("/");
     }
-
-    console.log(signInData);
   };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>
-            Please enter your details below to login to your account
-          </CardDescription>
+          <CardTitle className="text-xl">{t("loginForm.title")}</CardTitle>
+          <CardDescription>{t("loginForm.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t("email")}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -79,7 +85,7 @@ export function LoginForm({ className, ...props }) {
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t("password")}</Label>
                     {/* <a
                       href="#"
                       className="ml-auto text-sm underline-offset-4 hover:underline"
@@ -90,7 +96,7 @@ export function LoginForm({ className, ...props }) {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Password"
+                    placeholder={t("password")}
                     {...register("password")}
                   />
                   {errors.password && (
@@ -99,24 +105,34 @@ export function LoginForm({ className, ...props }) {
                     </p>
                   )}
                 </div>
-                <Button type="submit" className="w-full">
-                  Login
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="animate-spin" />
+                      {t("pleaseWait")}
+                    </>
+                  ) : (
+                    t("logIn")
+                  )}
                 </Button>
               </div>
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="/signup" className="underline underline-offset-4">
-                  Sign up
-                </a>
+              {errors.form && (
+                <p className="text-destructive text-sm text-center">
+                  {errors.form.message}
+                </p>
+              )}
+              <div className="text-sm flex justify-center">
+                <p>
+                  {t("loginForm.dontHaveAccount")}{" "}
+                  <a href="/signup" className="underline underline-offset-4">
+                    {t("signUp")}
+                  </a>
+                </p>
               </div>
             </div>
           </form>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </div>
     </div>
   );
 }

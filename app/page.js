@@ -1,14 +1,13 @@
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import Image from "next/image";
+import Header from "@/components/header";
 
-export default async function Home() {
-  const session = await getServerSession(authOptions);
-  console.log(session.user.name);
-
+export default function Home() {
   return (
-    <div className="h-screen w-full flex justify-center items-center">
-      <p>Hello, {session.user.name}!</p>
-    </div>
+    <>
+      <Header />
+
+      <main className="h-screen w-full flex justify-center items-center">
+        {/* {session ? <p>Hello, {session?.user.name}!</p> : <p>Not signed in</p>} */}
+      </main>
+    </>
   );
 }

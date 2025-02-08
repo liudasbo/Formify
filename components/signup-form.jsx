@@ -15,16 +15,25 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-
-// Form validation schema
-const formSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100, "name is too long"),
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
-});
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useTranslation } from "react-i18next";
 
 export function SignupForm({ className, ...props }) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
+
+  // Form validation schema
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(1, t("signUpForm.nameRequired"))
+      .max(100, t("signUpForm.longName")),
+    email: z.string().email(t("invalidEmail")),
+    password: z.string().min(1, t("passwordRequired")),
+  });
 
   const {
     register,
@@ -36,6 +45,8 @@ export function SignupForm({ className, ...props }) {
   });
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
+
     const response = await fetch("/api/user", {
       method: "POST",
       headers: {
@@ -45,17 +56,28 @@ export function SignupForm({ className, ...props }) {
     });
 
     if (response.ok) {
-      router.push("/");
+      const signInData = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (signInData.error) {
+        console.error(signInData.error);
+      } else {
+        router.push("/");
+      }
     } else {
       const errorData = await response.json();
       if (errorData.error && errorData.error.field === "email") {
         setError("email", {
           type: "manual",
-          message: errorData.error.message,
+          message: t("signUpForm.sameEmail"),
         });
       }
 
-      console.error("Failed to sign up");
+      console.log("Failed to sign up");
+      setIsLoading(false);
     }
   };
 
@@ -63,17 +85,15 @@ export function SignupForm({ className, ...props }) {
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Sign Up</CardTitle>
-          <CardDescription>
-            Sign up to access all the features of the app
-          </CardDescription>
+          <CardTitle className="text-xl">{t("signUp")}</CardTitle>
+          <CardDescription>{t("signUpForm.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">{t("name")}</Label>
                   <Input
                     id="name"
                     type="text"
@@ -87,7 +107,7 @@ export function SignupForm({ className, ...props }) {
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t("email")}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -101,7 +121,7 @@ export function SignupForm({ className, ...props }) {
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t("password")}</Label>
                   <Input
                     id="password"
                     type="password"
@@ -114,24 +134,27 @@ export function SignupForm({ className, ...props }) {
                     </p>
                   )}
                 </div>
-                <Button type="submit" className="w-full">
-                  Sign Up
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="animate-spin" />
+                      {t("pleaseWait")}
+                    </>
+                  ) : (
+                    t("signUp")
+                  )}
                 </Button>
               </div>
               <div className="text-center text-sm">
-                Already have an account?{" "}
+                {t("signUpForm.haveAccount")}{" "}
                 <a href="/login" className="underline underline-offset-4">
-                  Log in
+                  {t("logIn")}
                 </a>
               </div>
             </div>
           </form>
         </CardContent>
       </Card>
-      <div className="text-center text-xs text-muted-foreground">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </div>
     </div>
   );
 }
