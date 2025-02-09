@@ -1,0 +1,37 @@
+{
+  "logOut": "Log Out",
+  "logIn": "Log In",
+  "email": "Email",
+  "password": "Password",
+  "invalidEmail": "Invalid email",
+  "passwordRequired": "Password is required",
+  "pleaseWait": "Please wait",
+  "signUp": "Sign Up",
+  "name": "Name",
+  "loginForm": {
+    "title": "Welcome back",
+    "description": "Log in to your account to continue",
+    "invalidCredentials": "Invalid email or password",
+    "dontHaveAccount": "Don't have an account?"
+  },
+
+  "signUpForm": {
+    "description": "Sign up to access all the features of the app",
+    "nameRequired": "Name is required",
+    "longName": "Name is too long",
+    "sameEmail": "User with this email already exists",
+    "haveAccount": "Already have an account?"
+  },
+
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
+
+  "settings": "Settings",
+  "preferences": "Preferences",
+
+  "language": "Language",
+  "theme": "Theme",
+  "platform": "Platform",
+  "search": "Search"
+}

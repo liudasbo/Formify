@@ -1,46 +1,46 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
-  const [currentLang, setCurrentLang] = useState(i18n.language);
+  const [currentLang, setCurrentLang] = useState(null);
 
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedLang = localStorage.getItem("language") || "en";
+      i18n.changeLanguage(storedLang);
+      setCurrentLang(storedLang);
+    }
+  }, [i18n]);
+
+  const changeLanguage = async (lang) => {
+    await i18n.changeLanguage(lang);
+    localStorage.setItem("language", lang);
     setCurrentLang(lang);
   };
 
+  if (!currentLang) return null;
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="border-none text-[0.75rem]">
-          {currentLang.toUpperCase()}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={() => changeLanguage("en")}
-          className="cursor-pointer"
-        >
-          English
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => changeLanguage("lt")}
-          className="cursor-pointer"
-        >
-          Lietuvių
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex gap-2">
+      <Button
+        onClick={() => changeLanguage("en")}
+        variant={currentLang === "en" ? "secondary" : "outline"}
+        className="border"
+      >
+        English
+      </Button>
+      <Button
+        onClick={() => changeLanguage("lt")}
+        variant={currentLang === "lt" ? "secondary" : "outline"}
+        className="border"
+      >
+        Lietuvių
+      </Button>
+    </div>
   );
 };
 

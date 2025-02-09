@@ -9,6 +9,7 @@
 
 body {
   font-family: var(--font-geist-sans);
+  overscroll-behavior: none;
 }
 
 @layer base {

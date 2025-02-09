@@ -1,0 +1,37 @@
+{
+  "logOut": "Atsijungti",
+  "logIn": "Prisijungti",
+  "email": "El. paštas",
+  "password": "Slaptažodis",
+  "invalidEmail": "Neteisingas el. paštas",
+  "passwordRequired": "Slaptažodis privalomas",
+  "pleaseWait": "Prašome palaukti",
+  "signUp": "Registruotis",
+  "name": "Vardas",
+  "loginForm": {
+    "title": "Sveiki sugrįžę",
+    "description": "Prisijunkite prie savo paskyros, kad tęstumėte",
+    "invalidCredentials": "Neteisingi el. paštas arba slaptažodis",
+    "dontHaveAccount": "Neturite paskyros?"
+  },
+
+  "signUpForm": {
+    "description": "Registruokitės, kad galėtumėte pasiekti visas aplikacijos funkcijas",
+    "nameRequired": "Vardas privalomas",
+    "longName": "Vardas per ilgas",
+    "sameEmail": "Naudotojas su šiuo el. paštu jau egzistuoja",
+    "haveAccount": "Jau turite paskyrą?"
+  },
+
+  "light": "Šviesus",
+  "dark": "Tamsus",
+  "system": "Sistema",
+
+  "settings": "Nustatymai",
+  "preferences": "Paprastiniai nustatymai",
+
+  "language": "Kalba",
+  "theme": "Tema",
+  "platform": "Platforma",
+  "search": "Ieškoti"
+}

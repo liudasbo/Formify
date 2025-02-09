@@ -1,50 +1,44 @@
 "use client";
 
 import * as React from "react";
-import { Moon, MoonIcon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useTranslation } from "react-i18next";
 
 export function ModeToggle() {
-  const { setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const { t } = useTranslation();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null; // Kad išvengtume nekorektiško rodymo
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="border-none" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={() => setTheme("light")}
-          className="cursor-pointer"
-        >
-          {t("light")}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => setTheme("dark")}
-          className="cursor-pointer"
-        >
-          {t("dark")}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => setTheme("system")}
-          className="cursor-pointer"
-        >
-          {t("system")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex gap-2">
+      <Button
+        onClick={() => setTheme("light")}
+        variant={theme === "light" ? "secondary" : "outline"}
+        className="border cursor-pointer"
+      >
+        {t("light")}
+      </Button>
+      <Button
+        onClick={() => setTheme("dark")}
+        variant={theme === "dark" ? "secondary" : "outline"}
+        className="border cursor-pointer"
+      >
+        {t("dark")}
+      </Button>
+      <Button
+        onClick={() => setTheme("system")}
+        variant={theme === "system" ? "secondary" : "outline"}
+        className="border cursor-pointer"
+      >
+        {t("system")}
+      </Button>
+    </div>
   );
 }
