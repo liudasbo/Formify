@@ -27,9 +27,13 @@ export default function RootLayout({ children }) {
             >
               <SidebarProvider className="flex flex-col">
                 <SiteHeader />
-                <div className="flex flex-1">
+                <div className="flex flex-1 ">
                   <AppSidebar />
-                  <SidebarInset>{children}</SidebarInset>
+                  <SidebarInset>
+                    <main className="px-2 py-8 md:px-8 lg:px-16">
+                      {children}
+                    </main>
+                  </SidebarInset>
                 </div>
               </SidebarProvider>
             </ThemeProvider>

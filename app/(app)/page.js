@@ -10,7 +10,17 @@ export default function Home() {
   if (status === "loading") return;
   return (
     <div>
-      <p>{session ? `Signed in as ${session.user.email}` : "Not signed in"}</p>
+      <div>
+        <h2 className="scroll-m-20 border-b pb-2 text-xl text-muted-foreground">
+          Latest templates
+        </h2>
+      </div>
+
+      <div className="mt-20">
+        <h2 className="scroll-m-20 border-b pb-2 text-xl text-muted-foreground">
+          Top 5 popular templates
+        </h2>
+      </div>
     </div>
   );
 }

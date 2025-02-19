@@ -45,11 +45,11 @@ export function AppSidebar({ ...props }) {
       email: session ? session.user.email : "",
     },
     navMain: [
-      // {
-      //   title: "Create new form",
-      //   url: "#",
-      //   icon: FileText,
-      // },
+      {
+        title: "Create new template",
+        url: "/templates/new",
+        icon: FileText,
+      },
       {
         title: t("settings"),
         url: "/settings",

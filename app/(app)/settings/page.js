@@ -9,7 +9,7 @@ export default function SettingsPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="p-6 sm:p-20">
+    <div>
       <h1 className="text-4xl font-bold mb-8">{t("settings")}</h1>
 
       <div>
