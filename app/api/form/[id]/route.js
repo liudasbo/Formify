@@ -11,7 +11,7 @@ export async function GET(req, { params }) {
     //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     // }
 
-    const { id } = params;
+    const { id } = await params;
 
     const form = await db.template.findUnique({
       where: { id: parseInt(id) },

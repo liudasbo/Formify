@@ -1,5 +1,6 @@
 "use client";
 
+import { LatestTemplatesTable } from "@/components/latestTemplatesTable/latestTemplatesTable";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 
@@ -14,6 +15,7 @@ export default function Home() {
         <h2 className="scroll-m-20 border-b pb-2 text-xl text-muted-foreground">
           Latest templates
         </h2>
+        <LatestTemplatesTable />
       </div>
 
       <div className="mt-20">
