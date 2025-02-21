@@ -11,8 +11,19 @@ export default function NewTemplatePage() {
     setTemplateData(data);
   };
 
-  const handlePublish = () => {
-    console.log(templateData);
+  const handlePublish = async () => {
+    const data = templateData;
+    console.log(data);
+    const response = await fetch("/api/templates", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+    }
   };
 
   return (

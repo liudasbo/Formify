@@ -52,14 +52,45 @@ const QuestionList = ({ questions, setQuestions }) => {
     ]);
   };
 
-  const handleUpdate = (id, newTitle, isRequired, newType) => {
+  // const handleUpdate = (id, newTitle, isRequired, newType) => {
+  //   setQuestions((prevQuestions) =>
+  //     prevQuestions.map((q) =>
+  //       q.id === id
+  //         ? {
+  //             ...q,
+  //             title: newTitle,
+  //             required: isRequired,
+  //             type: newType,
+  //             options:
+  //               newType === "checkBoxes" || newType === "multipleChoice"
+  //                 ? q.options
+  //                 : [],
+  //           }
+  //         : q
+  //     )
+  //   );
+  // };
+
+  const updateTitle = (id, newTitle) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) => (q.id === id ? { ...q, title: newTitle } : q))
+    );
+  };
+
+  const updateRequired = (id, isRequired) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) =>
+        q.id === id ? { ...q, required: isRequired } : q
+      )
+    );
+  };
+
+  const updateType = (id, newType) => {
     setQuestions((prevQuestions) =>
       prevQuestions.map((q) =>
         q.id === id
           ? {
               ...q,
-              title: newTitle,
-              required: isRequired,
               type: newType,
               options:
                 newType === "checkBoxes" || newType === "multipleChoice"
@@ -83,8 +114,10 @@ const QuestionList = ({ questions, setQuestions }) => {
               key={question.id}
               onDelete={handleDelete}
               question={question}
-              handleUpdate={handleUpdate}
               setQuestions={setQuestions}
+              updateTitle={updateTitle}
+              updateRequired={updateRequired}
+              updateType={updateType}
             />
           ))}
         </SortableContext>

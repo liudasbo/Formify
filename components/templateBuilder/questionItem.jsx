@@ -18,7 +18,14 @@ import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import OptionList from "./optionList";
 
-const QuestionItem = ({ question, onDelete, handleUpdate, setQuestions }) => {
+const QuestionItem = ({
+  question,
+  onDelete,
+  updateTitle,
+  setQuestions,
+  updateRequired,
+  updateType,
+}) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: question.id });
 
@@ -46,7 +53,7 @@ const QuestionItem = ({ question, onDelete, handleUpdate, setQuestions }) => {
               <p className="text-sm">Question title</p>
               <Input
                 defaultValue={question.title}
-                onChange={(e) => handleUpdate(question.id, e.target.value)}
+                onChange={(e) => updateTitle(question.id, e.target.value)}
               />
             </div>
 
@@ -54,12 +61,7 @@ const QuestionItem = ({ question, onDelete, handleUpdate, setQuestions }) => {
               defaultValue={selectedType}
               onValueChange={(value) => {
                 setSelectedType(value);
-                handleUpdate(
-                  question.id,
-                  question.title,
-                  question.required,
-                  value
-                );
+                updateType(question.id, value);
               }}
             >
               <SelectTrigger className="w-[180px] mt-auto">
@@ -143,9 +145,8 @@ const QuestionItem = ({ question, onDelete, handleUpdate, setQuestions }) => {
               <p className="text-sm">Required</p>
               <Switch
                 checked={question.required}
-                onCheckedChange={(value) =>
-                  handleUpdate(question.id, question.title, value)
-                }
+                defaultValue={question.required}
+                onCheckedChange={(value) => updateRequired(question.id, value)}
               />
             </div>
           </div>

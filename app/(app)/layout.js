@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
                 <div className="flex flex-1 ">
                   <AppSidebar />
                   <SidebarInset>
-                    <main className="px-2 py-8 md:px-8 lg:px-16">
+                    <main className="px-2 py-8 md:px-8 lg:px-28">
                       {children}
                     </main>
                   </SidebarInset>
