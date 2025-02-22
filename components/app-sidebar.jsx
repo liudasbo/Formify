@@ -5,7 +5,7 @@ import {
   BookOpen,
   Bot,
   Command,
-  Frame,
+  LayoutDashboard,
   LifeBuoy,
   Map,
   PieChart,
@@ -51,6 +51,11 @@ export function AppSidebar({ ...props }) {
         icon: FileText,
       },
       {
+        title: "My dashboard",
+        url: "/user/dashboard",
+        icon: LayoutDashboard,
+      },
+      {
         title: t("settings"),
         url: "/settings",
         icon: Settings2,
@@ -68,21 +73,11 @@ export function AppSidebar({ ...props }) {
         icon: Send,
       },
     ],
-    projects: [
+    User: [
       {
-        name: "Design Engineering",
-        url: "#",
-        icon: Frame,
-      },
-      {
-        name: "Sales & Marketing",
-        url: "#",
-        icon: PieChart,
-      },
-      {
-        name: "Travel",
-        url: "#",
-        icon: Map,
+        name: "My templates",
+        url: "/user/templates",
+        icon: LayoutDashboard,
       },
     ],
   };
@@ -112,7 +107,7 @@ export function AppSidebar({ ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={sidebarData.navMain} />
-        {/* <NavProjects projects={sidebarData.projects} /> */}
+        {/* <NavProjects projects={sidebarData.User} /> */}
         {/* <NavSecondary items={sidebarData.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>

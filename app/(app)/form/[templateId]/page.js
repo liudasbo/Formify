@@ -47,7 +47,7 @@ export default function Form() {
 
   return (
     <div>
-      <div className="border p-6 rounded-lg flex flex-col gap-5">
+      <div className="border p-6 rounded-lg flex flex-col gap-5 shadow">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
           {form.title}
         </h2>
@@ -70,7 +70,7 @@ export default function Form() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 mt-4">
+      <div className="flex flex-col gap-4 mt-4 ">
         {form.questions.map((question) => (
           <FormQuestionItem question={question} key={question.id} />
         ))}

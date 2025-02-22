@@ -37,7 +37,7 @@ export default function TemplateBuilder({ handleTemplateData }) {
 
   return (
     <form className="flex flex-col gap-4 mt-4">
-      <div className="border p-6 rounded-lg ">
+      <div className="border p-6 rounded-lg shadow">
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-1">
             <p className="text-sm">Title</p>

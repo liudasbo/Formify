@@ -38,7 +38,7 @@ const QuestionItem = ({
 
   return (
     <div ref={setNodeRef} style={style} className="bg-background">
-      <div className="px-6 pb-6 border rounded-lg ">
+      <div className="px-6 pb-6 border rounded-lg shadow">
         <div
           {...attributes}
           {...listeners}

@@ -5,7 +5,7 @@ import { Checkbox } from "../ui/checkbox";
 
 export default function FormQuestionItem({ question }) {
   return (
-    <div className="flex flex-col gap-5 p-6 border rounded-lg ">
+    <div className="flex flex-col gap-5 p-6 border rounded-lg shadow">
       <div className=" flex gap-1">
         <p className="font-bold">{question.title}</p>
         {question.required ? <p className="text-destructive">*</p> : null}

@@ -52,25 +52,6 @@ const QuestionList = ({ questions, setQuestions }) => {
     ]);
   };
 
-  // const handleUpdate = (id, newTitle, isRequired, newType) => {
-  //   setQuestions((prevQuestions) =>
-  //     prevQuestions.map((q) =>
-  //       q.id === id
-  //         ? {
-  //             ...q,
-  //             title: newTitle,
-  //             required: isRequired,
-  //             type: newType,
-  //             options:
-  //               newType === "checkBoxes" || newType === "multipleChoice"
-  //                 ? q.options
-  //                 : [],
-  //           }
-  //         : q
-  //     )
-  //   );
-  // };
-
   const updateTitle = (id, newTitle) => {
     setQuestions((prevQuestions) =>
       prevQuestions.map((q) => (q.id === id ? { ...q, title: newTitle } : q))
