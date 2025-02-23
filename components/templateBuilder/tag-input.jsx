@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ReactTags } from "react-tag-autocomplete";
 import { Input } from "../ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,7 @@ import { X } from "lucide-react";
 import * as z from "zod";
 import { matchSorter } from "match-sorter";
 
-function TagInput({ onTagsChange }) {
+function TagInput({ onTagsChange, selectedTags }) {
   // Validation
   const [error, setError] = useState("");
 
@@ -34,6 +34,12 @@ function TagInput({ onTagsChange }) {
   }
 
   const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    if (selectedTags && selectedTags.length > 0) {
+      setSelected(selectedTags);
+    }
+  }, [selectedTags]);
 
   const initialSuggestions = [
     { value: 3, label: "Bananas" },

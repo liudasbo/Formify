@@ -14,25 +14,53 @@ export async function POST(req) {
     const userId = session.user.id;
 
     const data = await req.json();
-
     const { title, description, topic, tags, questions } = data;
 
-    const tagValues = tags.map((tag) => String(tag.value));
+    const tagValues = await Promise.all(
+      tags.map(async (tag) => {
+        let existingTag = await db.tags.findFirst({
+          where: { label: tag.label },
+        });
+
+        if (!existingTag) {
+          existingTag = await db.tags.create({
+            data: {
+              label: tag.label,
+            },
+          });
+        }
+
+        return existingTag;
+      })
+    );
 
     const newTemplate = await db.template.create({
       data: {
         title,
         description,
         topic,
-        tags: { set: tagValues },
         user: { connect: { id: userId } },
+        tags: {
+          connect: tagValues.map((tag) => ({ id: tag.id })),
+        },
         questions: {
           create: questions.map((question) => ({
             title: question.title || "Untitled question",
             type: question.type,
-            options: question.options.map((option) => option.value),
             required: question.required,
+            options: {
+              create: question.options.map((option) => ({
+                value: option.value,
+              })),
+            },
           })),
+        },
+      },
+      include: {
+        questions: {
+          include: {
+            options: true,
+          },
         },
       },
     });

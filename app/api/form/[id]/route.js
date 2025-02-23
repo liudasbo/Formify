@@ -15,7 +15,14 @@ export async function GET(req, { params }) {
 
     const form = await db.template.findUnique({
       where: { id: parseInt(id) },
-      include: { questions: true },
+      include: {
+        questions: {
+          include: {
+            options: true,
+          },
+        },
+        tags: true,
+      },
     });
 
     if (!form) {

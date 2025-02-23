@@ -13,23 +13,38 @@ import {
 import TagInput from "./tag-input";
 import QuestionList from "./questionList";
 
-export default function TemplateBuilder({ handleTemplateData }) {
-  const [title, setTitle] = useState("Unnamed");
-  const [description, setDescription] = useState("");
-  const [topic, setTopic] = useState("other");
-  const [tags, setTags] = useState([]);
-  const [questions, setQuestions] = useState([
-    {
-      id: 1,
-      title: "Untitled question",
-      type: "checkBoxes",
-      options: [
-        { id: 1, value: "Option 1" },
-        { id: 2, value: "Option 2" },
-      ],
-      required: true,
-    },
-  ]);
+export default function TemplateBuilder({ handleTemplateData, initialData }) {
+  const [title, setTitle] = useState(initialData?.title || "Unnamed");
+  const [description, setDescription] = useState(
+    initialData?.description || ""
+  );
+  const [topic, setTopic] = useState(initialData?.topic || "other");
+  const [tags, setTags] = useState(initialData?.tags || []);
+  const [questions, setQuestions] = useState(initialData?.questions || []);
+
+  useEffect(() => {
+    if (initialData) {
+      setTitle((prev) =>
+        prev !== initialData.title ? initialData.title || "Unnamed" : prev
+      );
+      setDescription((prev) =>
+        prev !== initialData.description ? initialData.description || "" : prev
+      );
+      setTopic((prev) =>
+        prev !== initialData.topic ? initialData.topic || "other" : prev
+      );
+      setTags((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(initialData.tags)
+          ? initialData.tags || []
+          : prev
+      );
+      setQuestions((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(initialData.questions)
+          ? initialData.questions || []
+          : prev
+      );
+    }
+  }, [initialData]);
 
   useEffect(() => {
     handleTemplateData({ title, description, topic, tags, questions });
@@ -42,7 +57,7 @@ export default function TemplateBuilder({ handleTemplateData }) {
           <div className="flex flex-col gap-1">
             <p className="text-sm">Title</p>
             <Input
-              defaultValue={title}
+              value={title}
               className="text-3xl md:text-3xl lg:text-3xl py-6"
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -60,7 +75,7 @@ export default function TemplateBuilder({ handleTemplateData }) {
 
           <div className="flex flex-col gap-1">
             <p className="text-sm">Topic</p>
-            <Select defaultValue={topic} onValueChange={setTopic}>
+            <Select value={topic} onValueChange={setTopic}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -80,7 +95,10 @@ export default function TemplateBuilder({ handleTemplateData }) {
 
           <div className="flex flex-col gap-1">
             <p className="text-sm">Tags</p>
-            <TagInput onTagsChange={setTags} />
+            <TagInput
+              onTagsChange={setTags}
+              selectedTags={initialData?.tags || []}
+            />
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { Button } from "../ui/button";
+import { v4 as uuidv4 } from "uuid";
 
 const QuestionList = ({ questions, setQuestions }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -43,15 +44,15 @@ const QuestionList = ({ questions, setQuestions }) => {
     setQuestions((prevQuestions) => [
       ...prevQuestions,
       {
-        id: prevQuestions.length + 1,
+        id: uuidv4(),
         title: "Untitled question",
         options: [],
         type: "checkBoxes",
         required: false,
+        isNew: true,
       },
     ]);
   };
-
   const updateTitle = (id, newTitle) => {
     setQuestions((prevQuestions) =>
       prevQuestions.map((q) => (q.id === id ? { ...q, title: newTitle } : q))

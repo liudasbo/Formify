@@ -42,7 +42,15 @@ const OptionList = ({ question, setQuestions }) => {
   };
 
   const handleDeleteOption = (optionId) => {
+    console.log("delete option", optionId);
     const newOptions = options.filter((option) => option.id !== optionId);
+    handleUpdateOptions(newOptions);
+  };
+
+  const handleUpdateOptionValue = (optionId, newValue) => {
+    const newOptions = options.map((option) =>
+      option.id === optionId ? { ...option, value: newValue } : option
+    );
     handleUpdateOptions(newOptions);
   };
 
@@ -58,6 +66,7 @@ const OptionList = ({ question, setQuestions }) => {
               key={option.id}
               option={option}
               onDelete={handleDeleteOption}
+              onUpdateValue={handleUpdateOptionValue}
             />
           ))}
         </SortableContext>

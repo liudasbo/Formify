@@ -1,37 +1,70 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import TemplateBuilder from "@/components/templateBuilder/template-builder";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
-export default function NewTemplatePage() {
+export default function EditTemplate() {
   const [templateData, setTemplateData] = useState({});
-  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   const handleTemplateData = (data) => {
     setTemplateData(data);
   };
 
-  const handlePublish = async () => {
-    const data = templateData;
-    const response = await fetch("/api/templates", {
-      method: "POST",
+  const params = useParams();
+  const id = params.templateId;
+
+  useEffect(() => {
+    async function fetchTemplateData() {
+      try {
+        const res = await fetch(`/api/form/${id}`);
+        if (!res.ok) {
+          throw new Error("Error fetching form");
+        }
+        const data = await res.json();
+        setTemplateData(data);
+      } catch (err) {
+        console.error("Error", err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (id) {
+      fetchTemplateData();
+    }
+  }, [id]);
+
+  const handleUpdate = async () => {
+    if (!id) {
+      console.error("Template ID is missing!");
+      return;
+    }
+
+    const response = await fetch(`/api/templates/update/${id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(templateData),
     });
 
     if (response.ok) {
-      router.push("/user/dashboard");
+      const result = await response.json();
+      console.log(result.message);
+    } else {
+      const error = await response.json();
+      console.error("Update error:", error.error);
     }
   };
 
+  if (loading) return <p>Loading...</p>;
   return (
     <div className="flex flex-col">
-      <Button className="ml-auto" onClick={handlePublish} type="button">
-        Publish
+      <Button className="ml-auto" type="button" onClick={handleUpdate}>
+        Update
       </Button>
       <Tabs defaultValue="template" className="w-full">
         <TabsList className=" inline-flex h-9 items-center text-muted-foreground w-full justify-start rounded-none border-b bg-transparent p-0">
@@ -55,7 +88,10 @@ export default function NewTemplatePage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="template">
-          <TemplateBuilder handleTemplateData={handleTemplateData} />
+          <TemplateBuilder
+            handleTemplateData={handleTemplateData}
+            initialData={templateData}
+          />
         </TabsContent>
         <TabsContent value="answers">Answers</TabsContent>
         <TabsContent value="settings">Settings</TabsContent>

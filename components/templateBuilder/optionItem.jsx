@@ -7,7 +7,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
 
-const OptionItem = ({ option, onDelete }) => {
+const OptionItem = ({ option, onDelete, onUpdateValue }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: option.id });
 
@@ -27,6 +27,7 @@ const OptionItem = ({ option, onDelete }) => {
       <Checkbox disabled />
       <Input
         defaultValue={option.value}
+        onChange={(e) => onUpdateValue(option.id, e.target.value)}
         className="border-0 shadow-none rounded-none focus-visible:ring-0 focus:border-b focus:border-foreground hover:border-b border-b"
       />
       <div

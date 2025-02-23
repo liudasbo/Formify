@@ -16,21 +16,21 @@ export default function Dashboard() {
 
   const userId = session?.user?.id;
 
-  useEffect(() => {
-    async function fetchTemplates() {
-      try {
-        const res = await fetch(`/api/templates/user/${userId}`);
-        if (!res.ok) {
-          throw new Error("Error fetching templates");
-        }
-        const data = await res.json();
-        setUserTemplates(data);
-      } catch (err) {
-        console.error(err);
-        setError(err.message || "error fetching templates");
+  const fetchTemplates = async () => {
+    try {
+      const res = await fetch(`/api/templates/user/${userId}`);
+      if (!res.ok) {
+        throw new Error("Error fetching templates");
       }
+      const data = await res.json();
+      setUserTemplates(data);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "error fetching templates");
     }
+  };
 
+  useEffect(() => {
     if (userId) {
       fetchTemplates();
     }
@@ -109,7 +109,10 @@ export default function Dashboard() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="myTemplates">
-          <MyTemplates userTemplates={userTemplates} />
+          <MyTemplates
+            userTemplates={userTemplates}
+            refreshData={fetchTemplates}
+          />
         </TabsContent>
         <TabsContent value="myForms">My forms</TabsContent>
       </Tabs>
