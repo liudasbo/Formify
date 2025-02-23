@@ -3,14 +3,15 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { templateId } = await params;
+    const url = new URL(req.url);
+    const templateId = url.pathname.split("/").pop();
     const parsedTemplateId = parseInt(templateId, 10);
 
     if (isNaN(parsedTemplateId)) {
@@ -20,7 +21,6 @@ export async function DELETE(req, { params }) {
       );
     }
 
-    // Patikriname, ar šablonas egzistuoja
     const existingTemplate = await db.template.findUnique({
       where: { id: parsedTemplateId },
       include: { questions: { include: { options: true } } },
@@ -33,24 +33,30 @@ export async function DELETE(req, { params }) {
       );
     }
 
-    // Surenkame visus klausimų ID
     const questionIds = existingTemplate.questions.map((q) => q.id);
 
-    // Pradėsime transakciją, kad užtikrintume vientisumą
-    await db.$transaction([
-      // 1. Ištriname variantus (options)
-      db.options.deleteMany({
+    const forms = await db.form.findMany({
+      where: { templateId: parsedTemplateId },
+    });
+    const formIds = forms.map((form) => form.id);
+
+    await db.$transaction(async (tx) => {
+      await tx.answer.deleteMany({
+        where: { formId: { in: formIds } },
+      });
+      await tx.form.deleteMany({
+        where: { id: { in: formIds } },
+      });
+      await tx.option.deleteMany({
         where: { questionId: { in: questionIds } },
-      }),
-      // 2. Ištriname klausimus (questions)
-      db.question.deleteMany({
+      });
+      await tx.question.deleteMany({
         where: { id: { in: questionIds } },
-      }),
-      // 3. Ištriname patį šabloną (template)
-      db.template.delete({
+      });
+      await tx.template.delete({
         where: { id: parsedTemplateId },
-      }),
-    ]);
+      });
+    });
 
     return NextResponse.json({ message: "Template deleted successfully!" });
   } catch (error) {

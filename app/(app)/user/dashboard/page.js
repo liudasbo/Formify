@@ -18,7 +18,7 @@ export default function Dashboard() {
 
   const fetchTemplates = async () => {
     try {
-      const res = await fetch(`/api/templates/user/${userId}`);
+      const res = await fetch(`/api/template/user/${userId}`);
       if (!res.ok) {
         throw new Error("Error fetching templates");
       }

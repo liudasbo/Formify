@@ -4,10 +4,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import TemplateBuilder from "@/components/templateBuilder/template-builder";
 import { useParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function EditTemplate() {
   const [templateData, setTemplateData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isUpdateBtnLoading, setIsUpdateBtnLoading] = useState(false);
 
   const handleTemplateData = (data) => {
     setTemplateData(data);
@@ -19,7 +22,7 @@ export default function EditTemplate() {
   useEffect(() => {
     async function fetchTemplateData() {
       try {
-        const res = await fetch(`/api/form/${id}`);
+        const res = await fetch(`/api/template/${id}`);
         if (!res.ok) {
           throw new Error("Error fetching form");
         }
@@ -38,12 +41,13 @@ export default function EditTemplate() {
   }, [id]);
 
   const handleUpdate = async () => {
+    setIsUpdateBtnLoading(true);
     if (!id) {
       console.error("Template ID is missing!");
       return;
     }
 
-    const response = await fetch(`/api/templates/update/${id}`, {
+    const response = await fetch(`/api/template/update/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -54,6 +58,8 @@ export default function EditTemplate() {
     if (response.ok) {
       const result = await response.json();
       console.log(result.message);
+      setIsUpdateBtnLoading(false);
+      toast("Template updated successfully!", { type: "success" });
     } else {
       const error = await response.json();
       console.error("Update error:", error.error);
@@ -63,8 +69,16 @@ export default function EditTemplate() {
   if (loading) return <p>Loading...</p>;
   return (
     <div className="flex flex-col">
+      <h1 className="text-4xl font-bold">Customize your template</h1>
       <Button className="ml-auto" type="button" onClick={handleUpdate}>
-        Update
+        {isUpdateBtnLoading ? (
+          <>
+            <Loader2 className="animate-spin" />
+            Loading...
+          </>
+        ) : (
+          "Update"
+        )}
       </Button>
       <Tabs defaultValue="template" className="w-full">
         <TabsList className=" inline-flex h-9 items-center text-muted-foreground w-full justify-start rounded-none border-b bg-transparent p-0">

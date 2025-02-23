@@ -46,7 +46,7 @@ export const LatestTemplatesTable = () => {
   useEffect(() => {
     async function fetchTemplates() {
       try {
-        const res = await fetch("/api/templates/latest");
+        const res = await fetch("/api/template/latest");
         if (!res.ok) {
           throw new Error("Error fetching templates");
         }
@@ -70,8 +70,6 @@ export const LatestTemplatesTable = () => {
     }
     return text;
   }
-
-  console.log(truncateText("This is a long text", 10));
 
   return (
     <div>

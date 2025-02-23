@@ -15,6 +15,7 @@ model User {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   templates Template[]
+  Form      Form[]
 }
 
 model Template {
@@ -27,6 +28,7 @@ model Template {
   createdAt   DateTime   @default(now())
   userId      Int
   user        User       @relation(fields: [userId], references: [id])
+  Form        Form[]
 }
 
 model Question {
@@ -37,6 +39,7 @@ model Question {
   options    Options[]
   required   Boolean
   template   Template? @relation(fields: [templateId], references: [id])
+  Answer     Answer[]
 }
 
 model Options {
@@ -44,10 +47,33 @@ model Options {
   value      String
   questionId Int?
   question   Question? @relation(fields: [questionId], references: [id])
+  Answer     Answer[]
 }
 
 model Tags {
   id        Int        @id @default(autoincrement())
   label     String
   templates Template[] @relation("TemplateTags")
+}
+
+model Form {
+  id         Int      @id @default(autoincrement())
+  templateId Int
+  userId     Int?
+  createdAt  DateTime @default(now())
+  template   Template @relation(fields: [templateId], references: [id])
+  user       User?    @relation(fields: [userId], references: [id])
+  answers    Answer[]
+}
+
+model Answer {
+  id         Int      @id @default(autoincrement())
+  formId     Int
+  questionId Int
+  textValue  String?
+  intValue   Int?
+  optionId   Int?
+  form       Form     @relation(fields: [formId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id])
+  option     Options? @relation(fields: [optionId], references: [id])
 }

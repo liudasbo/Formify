@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 import dayjs from "dayjs";
 import { SquarePen } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const columns = (refreshData) => [
   {
@@ -30,10 +31,21 @@ export const columns = (refreshData) => [
 
       const handleDelete = async () => {
         const id = row.original.id;
-        await fetch(`/api/templates/delete/${id}`, {
-          method: "DELETE",
-        });
-        refreshData();
+        try {
+          console.log("Deleting template with ID:", id);
+          const res = await fetch(`/api/template/delete/${id}`, {
+            method: "DELETE",
+          });
+          if (res.ok) {
+            refreshData();
+            toast.success("Template deleted successfully");
+          } else {
+            console.error("Failed to delete template");
+            toast.error("Failed to delete template");
+          }
+        } catch (error) {
+          console.error("Error deleting template:", error);
+        }
       };
 
       return (

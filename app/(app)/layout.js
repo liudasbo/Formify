@@ -6,6 +6,7 @@ import I18nProvider from "@/components/I18nProvider";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata = {
   title: "Formify",
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
                   <AppSidebar />
                   <SidebarInset>
                     <main className="px-2 py-8 md:px-12">{children}</main>
+                    <Toaster />
                   </SidebarInset>
                 </div>
               </SidebarProvider>

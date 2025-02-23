@@ -4,18 +4,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import TemplateBuilder from "@/components/templateBuilder/template-builder";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function NewTemplatePage() {
   const [templateData, setTemplateData] = useState({});
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleTemplateData = (data) => {
     setTemplateData(data);
   };
 
   const handlePublish = async () => {
+    setIsLoading(true);
     const data = templateData;
-    const response = await fetch("/api/templates", {
+    const response = await fetch("/api/template/submit", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,8 +33,20 @@ export default function NewTemplatePage() {
 
   return (
     <div className="flex flex-col">
-      <Button className="ml-auto" onClick={handlePublish} type="button">
-        Publish
+      <Button
+        type="button"
+        onClick={handlePublish}
+        className="ml-auto"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="animate-spin" />
+            Loading...
+          </>
+        ) : (
+          "Publish"
+        )}
       </Button>
       <Tabs defaultValue="template" className="w-full">
         <TabsList className=" inline-flex h-9 items-center text-muted-foreground w-full justify-start rounded-none border-b bg-transparent p-0">
