@@ -50,52 +50,106 @@ export async function POST(req) {
           },
         });
 
-        const newOptionIds = Array.isArray(answer.answer)
-          ? answer.answer
-          : [answer.answer];
+        if (question.type === "shortAnswer" || question.type === "paragraph") {
+          // Update or create text answers
+          const textValue = Array.isArray(answer.answer)
+            ? answer.answer[0]
+            : answer.answer;
+          const existingAnswer = existingAnswers[0];
 
-        // Update or create new answers
-        const updatedAnswers = await Promise.all(
-          newOptionIds.map(async (optionId) => {
-            if (typeof optionId === "string") {
-              throw new Error(`Invalid optionId value: ${optionId}`);
-            }
+          if (existingAnswer) {
+            return db.answer.update({
+              where: { id: existingAnswer.id },
+              data: {
+                textValue: textValue,
+                intValue: null,
+                optionId: null,
+              },
+            });
+          } else {
+            return db.answer.create({
+              data: {
+                formId: form.id,
+                questionId: answer.questionId,
+                textValue: textValue,
+                intValue: null,
+                optionId: null,
+              },
+            });
+          }
+        } else if (question.type === "positiveInteger") {
+          // Update or create integer answers
+          const intValue = parseInt(answer.answer, 10);
+          const existingAnswer = existingAnswers[0];
 
-            const existingAnswer = existingAnswers.find(
-              (ea) => ea.optionId === optionId
-            );
+          if (existingAnswer) {
+            return db.answer.update({
+              where: { id: existingAnswer.id },
+              data: {
+                textValue: null,
+                intValue: intValue,
+                optionId: null,
+              },
+            });
+          } else {
+            return db.answer.create({
+              data: {
+                formId: form.id,
+                questionId: answer.questionId,
+                textValue: null,
+                intValue: intValue,
+                optionId: null,
+              },
+            });
+          }
+        } else {
+          // Update or create option answers
+          const newOptionIds = Array.isArray(answer.answer)
+            ? answer.answer
+            : [answer.answer];
 
-            if (existingAnswer) {
-              return db.answer.update({
-                where: { id: existingAnswer.id },
-                data: {
-                  textValue: null,
-                  intValue: null,
-                  optionId: optionId,
-                },
-              });
-            } else {
-              return db.answer.create({
-                data: {
-                  formId: form.id,
-                  questionId: answer.questionId,
-                  textValue: null,
-                  intValue: null,
-                  optionId: optionId,
-                },
-              });
-            }
-          })
-        );
+          const updatedAnswers = await Promise.all(
+            newOptionIds.map(async (optionId) => {
+              if (typeof optionId === "string") {
+                throw new Error(`Invalid optionId value: ${optionId}`);
+              }
 
-        // Delete answers that are no longer selected
-        const deletedAnswers = await Promise.all(
-          existingAnswers
-            .filter((ea) => !newOptionIds.includes(ea.optionId))
-            .map((ea) => db.answer.delete({ where: { id: ea.id } }))
-        );
+              const existingAnswer = existingAnswers.find(
+                (ea) => ea.optionId === optionId
+              );
 
-        return [...updatedAnswers, ...deletedAnswers];
+              if (existingAnswer) {
+                return db.answer.update({
+                  where: { id: existingAnswer.id },
+                  data: {
+                    textValue: null,
+                    intValue: null,
+                    optionId: optionId,
+                  },
+                });
+              } else {
+                return db.answer.create({
+                  data: {
+                    formId: form.id,
+                    questionId: answer.questionId,
+                    textValue: null,
+                    intValue: null,
+                    optionId: optionId,
+                  },
+                });
+              }
+            })
+          );
+
+          // Delete answers that are no longer selected
+          const deletedAnswers = await Promise.all(
+            existingAnswers
+              .filter((ea) => !newOptionIds.includes(ea.optionId))
+              .map((ea) => db.answer.delete({ where: { id: ea.id } }))
+          );
+
+          return [...updatedAnswers, ...deletedAnswers];
+        }
       })
     );
 

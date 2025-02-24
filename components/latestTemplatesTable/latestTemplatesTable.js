@@ -27,7 +27,7 @@ function AuthorEmail({ userId }) {
         const userData = await userRes.json();
         setEmail(userData.email);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching user:", error.message);
         setEmail("Error");
       } finally {
         setLoading(false);
@@ -41,6 +41,7 @@ function AuthorEmail({ userId }) {
 
 export const LatestTemplatesTable = () => {
   const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,7 +54,9 @@ export const LatestTemplatesTable = () => {
         const data = await res.json();
         setTemplates(data);
       } catch (err) {
-        console.error("Error", err.message);
+        console.error("Error fetching templates:", err.message);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -69,6 +72,10 @@ export const LatestTemplatesTable = () => {
       return text.slice(0, maxLength) + "...";
     }
     return text;
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (

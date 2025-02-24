@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import FormQuestionItem from "@/components/form/formQuestionItem";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 export default function Form() {
   const params = useParams();
@@ -13,6 +15,8 @@ export default function Form() {
   const [author, setAuthor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState({});
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchTemplate() {
@@ -42,13 +46,15 @@ export default function Form() {
       try {
         const res = await fetch(`/api/form/${templateId}`);
         if (!res.ok) {
-          throw new Error("Error fetching answers");
+          console.warn("No form answers found");
+          return;
         }
 
         const data = await res.json();
 
         if (!Array.isArray(data.answers)) {
-          throw new Error("No answers found");
+          console.warn("No answers found");
+          return;
         }
 
         const initialAnswers = {};
@@ -78,10 +84,10 @@ export default function Form() {
       ...prevAnswers,
       [questionId]: answer,
     }));
-    console.log("Answers", answers);
   };
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     try {
       const res = await fetch(`/api/form/submit`, {
         method: "POST",
@@ -102,8 +108,8 @@ export default function Form() {
         throw new Error(errorData.error || "Error submitting form and answers");
       }
 
-      const result = await res.json();
-      console.log("Form and answers submitted successfully", result);
+      setIsSubmitting(false);
+      toast("Form submitted successfully!", { type: "success" });
     } catch (err) {
       console.error("Error", err.message);
     }
@@ -147,7 +153,14 @@ export default function Form() {
       </div>
 
       <Button onClick={handleSubmit} className="mt-4">
-        Submit
+        {isSubmitting ? (
+          <>
+            <Loader2 className="animate-spin" />
+            Loading...
+          </>
+        ) : (
+          "Submit"
+        )}
       </Button>
     </div>
   );

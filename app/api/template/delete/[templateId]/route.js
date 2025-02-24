@@ -47,7 +47,7 @@ export async function DELETE(req) {
       await tx.form.deleteMany({
         where: { id: { in: formIds } },
       });
-      await tx.option.deleteMany({
+      await tx.options.deleteMany({
         where: { questionId: { in: questionIds } },
       });
       await tx.question.deleteMany({

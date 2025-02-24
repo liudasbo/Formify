@@ -6,10 +6,12 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MyTemplates from "@/components/dashboard/myTemplates/myTemplates";
+import MyForms from "@/components/dashboard/myForms/myForms";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const [userTemplates, setUserTemplates] = useState([]);
+  const [userForms, setUserForms] = useState([]);
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,13 +28,28 @@ export default function Dashboard() {
       setUserTemplates(data);
     } catch (err) {
       console.error(err);
-      setError(err.message || "error fetching templates");
+      setError(err.message || "Error fetching templates");
+    }
+  };
+
+  const fetchForms = async () => {
+    try {
+      const res = await fetch(`/api/form/user/${userId}`);
+      if (!res.ok) {
+        throw new Error("Error fetching forms");
+      }
+      const data = await res.json();
+      setUserForms(data);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Error fetching forms");
     }
   };
 
   useEffect(() => {
     if (userId) {
       fetchTemplates();
+      fetchForms();
     }
   }, [userId]);
 
@@ -89,7 +106,7 @@ export default function Dashboard() {
 
         <div className="flex flex-col items-center text-center gap-2">
           <p className="text-sm">Forms filled</p>
-          <p className="font-bold">0</p>
+          <p className="font-bold">{userForms.length}</p>
         </div>
       </div>
 
@@ -114,7 +131,9 @@ export default function Dashboard() {
             refreshData={fetchTemplates}
           />
         </TabsContent>
-        <TabsContent value="myForms">My forms</TabsContent>
+        <TabsContent value="myForms">
+          <MyForms userForms={userForms} refreshData={fetchForms} />
+        </TabsContent>
       </Tabs>
     </div>
   );
