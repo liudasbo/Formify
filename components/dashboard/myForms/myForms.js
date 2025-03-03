@@ -11,8 +11,6 @@ export default function MyForms({ userForms, refreshData }) {
     setData(userForms);
   }, [userForms]);
 
-  console.log(data);
-
   return (
     <div>
       <DataTable columns={columns(refreshData)} data={data} />

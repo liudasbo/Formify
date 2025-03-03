@@ -1,15 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import FormQuestionItem from "@/components/form/formQuestionItem";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export default function Form() {
   const params = useParams();
   const templateId = parseInt(params.templateId, 10);
+  const router = useRouter();
 
   const [template, setTemplate] = useState(null);
   const [author, setAuthor] = useState(null);
@@ -17,6 +19,8 @@ export default function Form() {
   const [answers, setAnswers] = useState({});
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     async function fetchTemplate() {
@@ -116,8 +120,18 @@ export default function Form() {
   };
 
   if (loading) return <p>Loading...</p>;
+
   return (
     <div>
+      {author.id === session?.user.id ? (
+        <Button
+          variant="secondary"
+          className="mb-4"
+          onClick={() => router.push(`/templates/edit/${templateId}`)}
+        >
+          Edit your template
+        </Button>
+      ) : null}
       <div className="border p-6 rounded-lg flex flex-col gap-5 shadow">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
           {template.title}
@@ -152,16 +166,18 @@ export default function Form() {
         ))}
       </div>
 
-      <Button onClick={handleSubmit} className="mt-4">
-        {isSubmitting ? (
-          <>
-            <Loader2 className="animate-spin" />
-            Loading...
-          </>
-        ) : (
-          "Submit"
-        )}
-      </Button>
+      {session ? (
+        <Button onClick={handleSubmit} className="mt-4">
+          {isSubmitting ? (
+            <>
+              <Loader2 className="animate-spin" />
+              Loading...
+            </>
+          ) : (
+            "Submit"
+          )}
+        </Button>
+      ) : null}
     </div>
   );
 }

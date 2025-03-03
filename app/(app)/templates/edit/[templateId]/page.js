@@ -3,14 +3,17 @@ import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import TemplateBuilder from "@/components/templateBuilder/template-builder";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 export default function EditTemplate() {
   const [templateData, setTemplateData] = useState({});
   const [loading, setLoading] = useState(true);
   const [isUpdateBtnLoading, setIsUpdateBtnLoading] = useState(false);
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   const handleTemplateData = (data) => {
     setTemplateData(data);
@@ -39,6 +42,17 @@ export default function EditTemplate() {
       fetchTemplateData();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (
+      status === "authenticated" &&
+      templateData.userId &&
+      templateData.userId !== session.user.id
+    ) {
+      toast.error("You do not have permission to edit this template.");
+      router.push("/"); // Redirect to home or another appropriate page
+    }
+  }, [status, templateData, session, router]);
 
   const handleUpdate = async () => {
     setIsUpdateBtnLoading(true);

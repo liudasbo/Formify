@@ -2,16 +2,10 @@
 
 import * as React from "react";
 import {
-  BookOpen,
-  Bot,
-  Command,
   LayoutDashboard,
   LifeBuoy,
-  Map,
-  PieChart,
   Send,
   Settings2,
-  SquareTerminal,
   FileText,
   BookText,
 } from "lucide-react";
@@ -46,16 +40,6 @@ export function AppSidebar({ ...props }) {
     },
     navMain: [
       {
-        title: "Create new template",
-        url: "/templates/new",
-        icon: FileText,
-      },
-      {
-        title: "My dashboard",
-        url: "/user/dashboard",
-        icon: LayoutDashboard,
-      },
-      {
         title: t("settings"),
         url: "/settings",
         icon: Settings2,
@@ -75,9 +59,14 @@ export function AppSidebar({ ...props }) {
     ],
     User: [
       {
-        name: "My templates",
-        url: "/user/templates",
+        title: "My dashboard",
+        url: "/user/dashboard",
         icon: LayoutDashboard,
+      },
+      {
+        title: "Create new template",
+        url: "/templates/new",
+        icon: FileText,
       },
     ],
   };
@@ -107,7 +96,7 @@ export function AppSidebar({ ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={sidebarData.navMain} />
-        {/* <NavProjects projects={sidebarData.User} /> */}
+        {session ? <NavProjects projects={sidebarData.User} /> : null}
         {/* <NavSecondary items={sidebarData.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>

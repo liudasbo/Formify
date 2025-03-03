@@ -27,12 +27,12 @@ export function NavProjects({ projects }) {
       <SidebarGroupLabel>User</SidebarGroupLabel>
 
       <SidebarMenu>
-        {projects.map((item) => (
-          <SidebarMenuItem key={item.name}>
+        {projects.map((item, index) => (
+          <SidebarMenuItem key={item.id || index}>
             <SidebarMenuButton asChild>
               <a href={item.url}>
                 <item.icon />
-                <span>{item.name}</span>
+                <span>{item.title}</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
