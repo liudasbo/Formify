@@ -9,12 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useRouter } from "next/navigation";
 
 export function AnswersTable({ templateId }) {
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userEmails, setUserEmails] = useState({});
+  const router = useRouter();
 
   const fetchData = async () => {
     try {
@@ -71,7 +73,11 @@ export function AnswersTable({ templateId }) {
       </TableHeader>
       <TableBody>
         {forms.map((form) => (
-          <TableRow key={form.id}>
+          <TableRow
+            key={form.id}
+            onClick={() => router.push(`/templates/answers/${form.id}`)}
+            className="cursor-pointer"
+          >
             <TableCell>{userEmails[form.userId] || "Loading..."}</TableCell>
             <TableCell>{new Date(form.createdAt).toLocaleString()}</TableCell>
             <TableCell className="font-medium">{form.id}</TableCell>
