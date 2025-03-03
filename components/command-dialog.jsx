@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,29 +8,51 @@ import {
 } from "@/components/ui/dialog";
 
 import {
-  Calculator,
-  Calendar,
-  CreditCard,
-  Settings,
-  Smile,
-  User,
-} from "lucide-react";
-
-import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 
 export function CommandDialog() {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
+  const router = useRouter();
+
+  const [templatesData, setTemplatesData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    if (searchTerm) {
+      async function fetchTemplates() {
+        try {
+          const res = await fetch(`/api/template/search?query=${searchTerm}`);
+          if (!res.ok) {
+            throw new Error("Error fetching templates");
+          }
+          const data = await res.json();
+
+          setTemplatesData(data);
+        } catch (err) {
+          console.error("Error", err.message);
+        }
+      }
+      fetchTemplates();
+    } else {
+      setTemplatesData([]);
+    }
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (!open) {
+      setSearchTerm("");
+      setTemplatesData([]);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -42,46 +64,37 @@ export function CommandDialog() {
           {t("search")}...
         </Button>
       </DialogTrigger>
-      <DialogContent className="overflow-hidden p-0">
+      <DialogContent className="overflow-hidden p-0 rounded-lg">
         {/* Hidden title for screen readers */}
         <DialogTitle className="sr-only">Command Dialog</DialogTitle>
         <Command className="rounded-lg border shadow-md md:min-w-[450px]">
-          <CommandInput placeholder="Type a command or search..." />
-          <CommandList>
+          <CommandInput
+            placeholder="Type a command or search..."
+            onValueChange={(value) => {
+              setSearchTerm(value);
+            }}
+          />
+          {templatesData.length > 0 ? (
+            <CommandList>
+              <CommandGroup heading="Templates">
+                {templatesData.map((template) => (
+                  <CommandItem
+                    key={template.id}
+                    value={template.title}
+                    className="cursor-pointer"
+                    onSelect={() => {
+                      router.push(`/form/${template.id}`);
+                      setOpen(false);
+                    }}
+                  >
+                    <span>{template.title}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          ) : (
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Suggestions">
-              <CommandItem>
-                <Calendar />
-                <span>Calendar</span>
-              </CommandItem>
-              <CommandItem>
-                <Smile />
-                <span>Search Emoji</span>
-              </CommandItem>
-              <CommandItem disabled>
-                <Calculator />
-                <span>Calculator</span>
-              </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="Settings">
-              <CommandItem>
-                <User />
-                <span>Profile</span>
-                <CommandShortcut>⌘P</CommandShortcut>
-              </CommandItem>
-              <CommandItem>
-                <CreditCard />
-                <span>Billing</span>
-                <CommandShortcut>⌘B</CommandShortcut>
-              </CommandItem>
-              <CommandItem>
-                <Settings />
-                <span>Settings</span>
-                <CommandShortcut>⌘S</CommandShortcut>
-              </CommandItem>
-            </CommandGroup>
-          </CommandList>
+          )}
         </Command>
       </DialogContent>
     </Dialog>
