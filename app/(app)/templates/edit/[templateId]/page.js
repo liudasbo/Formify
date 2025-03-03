@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { AnswersTable } from "@/components/templateAnswersTable/answersTable";
 
 export default function EditTemplate() {
   const [templateData, setTemplateData] = useState({});
@@ -121,7 +122,9 @@ export default function EditTemplate() {
             initialData={templateData}
           />
         </TabsContent>
-        <TabsContent value="answers">Answers</TabsContent>
+        <TabsContent value="answers">
+          <AnswersTable templateId={id} />
+        </TabsContent>
         <TabsContent value="settings">Settings</TabsContent>
       </Tabs>
     </div>

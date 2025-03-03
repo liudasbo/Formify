@@ -1,11 +1,12 @@
 "use client";
 
-import { Trash2, SquarePen } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import dayjs from "dayjs";
+import { SquarePen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const columns = (refreshData, router) => [
+export const columns = (refreshData) => [
   {
     accessorKey: "title",
     header: "Title",
@@ -26,6 +27,8 @@ export const columns = (refreshData, router) => [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
+      const router = useRouter();
+
       const handleDelete = async () => {
         const id = row.original.id;
         try {
@@ -56,7 +59,7 @@ export const columns = (refreshData, router) => [
 
           <div
             onClick={() => router.push(`/templates/edit/${row.original.id}`)}
-            className="hover:bg-muted p-2 rounded-lg cursor-pointer"
+            className="hover:bg-muted p-2 rounded-lg cursor-pointer  "
           >
             <SquarePen size={16} />
           </div>
@@ -65,8 +68,3 @@ export const columns = (refreshData, router) => [
     },
   },
 ];
-
-const MyComponent = ({ refreshData }) => {
-  const router = useRouter();
-  const columnsConfig = columns(refreshData, router);
-};

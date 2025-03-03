@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -20,46 +20,48 @@ export default function Dashboard() {
 
   const userId = session?.user?.id;
 
+  const fetchData = useCallback(async () => {
+    if (!userId) return;
+
+    try {
+      const [templatesRes, formsRes, userRes] = await Promise.all([
+        fetch(`/api/template/user/${userId}`),
+        fetch(`/api/form/user/${userId}`),
+        fetch(`/api/user/${userId}`),
+      ]);
+
+      if (!templatesRes.ok) throw new Error("Error fetching templates");
+      if (!formsRes.ok) throw new Error("Error fetching forms");
+      if (!userRes.ok) throw new Error("Error fetching user");
+
+      const [templatesData, formsData, userData] = await Promise.all([
+        templatesRes.json(),
+        formsRes.json(),
+        userRes.json(),
+      ]);
+
+      setUserTemplates(templatesData);
+      setUserForms(formsData);
+      setEmail(userData.email);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Error fetching data");
+      setEmail("Error");
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/");
       return;
     }
 
-    if (!userId) return;
-
-    const fetchData = async () => {
-      try {
-        const [templatesRes, formsRes, userRes] = await Promise.all([
-          fetch(`/api/template/user/${userId}`),
-          fetch(`/api/form/user/${userId}`),
-          fetch(`/api/user/${userId}`),
-        ]);
-
-        if (!templatesRes.ok) throw new Error("Error fetching templates");
-        if (!formsRes.ok) throw new Error("Error fetching forms");
-        if (!userRes.ok) throw new Error("Error fetching user");
-
-        const [templatesData, formsData, userData] = await Promise.all([
-          templatesRes.json(),
-          formsRes.json(),
-          userRes.json(),
-        ]);
-
-        setUserTemplates(templatesData);
-        setUserForms(formsData);
-        setEmail(userData.email);
-      } catch (err) {
-        console.error(err);
-        setError(err.message || "Error fetching data");
-        setEmail("Error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [status, userId, router]);
+    if (status === "authenticated") {
+      fetchData();
+    }
+  }, [status, userId, router, fetchData]);
 
   if (status === "loading" || loading) return <p>Loading...</p>;
 
@@ -111,10 +113,10 @@ export default function Dashboard() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="myTemplates">
-          <MyTemplates userTemplates={userTemplates} />
+          <MyTemplates userTemplates={userTemplates} refreshData={fetchData} />
         </TabsContent>
         <TabsContent value="myForms">
-          <MyForms userForms={userForms} />
+          <MyForms userForms={userForms} refreshData={fetchData} />
         </TabsContent>
       </Tabs>
     </div>

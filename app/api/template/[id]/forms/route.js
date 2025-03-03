@@ -2,19 +2,19 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
-  const { userId } = await params;
-
   try {
+    const templateId = parseInt(params.id, 10);
+
+    if (isNaN(templateId)) {
+      return NextResponse.json(
+        { error: "Invalid templateId parameter" },
+        { status: 400 }
+      );
+    }
+
     const forms = await db.form.findMany({
-      where: { userId: parseInt(userId, 10) },
-      include: {
-        template: true,
-        answers: {
-          include: {
-            question: true,
-            option: true,
-          },
-        },
+      where: {
+        templateId: templateId,
       },
     });
 
