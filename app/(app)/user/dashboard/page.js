@@ -8,16 +8,20 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MyTemplates from "@/components/dashboard/myTemplates/myTemplates";
 import MyForms from "@/components/dashboard/myForms/myForms";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+import SalesForceDialog from "@/components/dashboard/salesForceDialog/salesForceDialog";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [userTemplates, setUserTemplates] = useState([]);
   const [userForms, setUserForms] = useState([]);
-  const [email, setEmail] = useState("");
+  const [userData, setUserData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [isUnlinking, setIsUnlinking] = useState(false);
   const userId = session?.user?.id;
 
   const fetchData = useCallback(async () => {
@@ -42,15 +46,39 @@ export default function Dashboard() {
 
       setUserTemplates(templatesData);
       setUserForms(formsData);
-      setEmail(userData.email);
+      setUserData(userData);
     } catch (err) {
       console.error(err);
       setError(err.message || "Error fetching data");
-      setEmail("Error");
+      setUserData({ user: "Error" });
     } finally {
       setLoading(false);
     }
   }, [userId]);
+
+  const handleUnlink = async () => {
+    setIsUnlinking(true);
+
+    try {
+      const response = await fetch(`/api/salesforce/unlink?userId=${userId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Failed to unlink Salesforce account"
+        );
+      }
+
+      toast.success("Successfully unlinked from Salesforce");
+      fetchData();
+    } catch (error) {
+      toast.error(`Error: ${error.message}`);
+    } finally {
+      setIsUnlinking(false);
+    }
+  };
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -74,15 +102,15 @@ export default function Dashboard() {
       {error && <p className="text-red-500">{error}</p>}
 
       <div className="flex">
+        {/* USER INFO */}
         <div className="flex border rounded-lg shadow p-6 gap-6 justify-around">
-          {/* USER INFO */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Avatar>
               <AvatarFallback>{session.user.name.slice(0, 1)}</AvatarFallback>
             </Avatar>
             <div>
               <p className="text-sm font-bold">{session.user.name}</p>
-              <p className="text-sm">{session.user.email}</p>
+              <p className="text-sm">{userData.email}</p>
             </div>
           </div>
 
@@ -102,6 +130,20 @@ export default function Dashboard() {
             <p className="text-sm font-bold">{userForms.length}</p>
           </div>
         </div>
+      </div>
+
+      <div>
+        {userData.isSyncedWithSalesforce ? (
+          <Button
+            variant="destructive"
+            onClick={handleUnlink}
+            disabled={isUnlinking}
+          >
+            {isUnlinking ? "Unlinking..." : "Unlink from Salesforce"}
+          </Button>
+        ) : (
+          <SalesForceDialog user={session.user} fetchData={fetchData} />
+        )}
       </div>
 
       <Tabs defaultValue="myTemplates" className="w-full">

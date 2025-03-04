@@ -105,7 +105,7 @@ const QuestionList = ({ questions, setQuestions }) => {
         </SortableContext>
       </DndContext>
       <div className="mx-auto">
-        <Button onClick={handleAdd} type="button">
+        <Button onClick={handleAdd} type="button" variant="secondary">
           Add Question
         </Button>
       </div>

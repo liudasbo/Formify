@@ -36,7 +36,7 @@ export default function NewTemplatePage() {
       <Button
         type="button"
         onClick={handlePublish}
-        className="ml-auto"
+        className="ml-auto mb-6"
         disabled={isLoading}
       >
         {isLoading ? (
@@ -49,22 +49,16 @@ export default function NewTemplatePage() {
         )}
       </Button>
       <Tabs defaultValue="template" className="w-full">
-        <TabsList className=" inline-flex h-9 items-center text-muted-foreground w-full justify-start rounded-none border-b bg-transparent p-0">
+        <TabsList className="w-full flex p-4 mb-6">
           <TabsTrigger
             value="template"
-            className="inline-flex items-center justify-center whitespace-nowrap py-1 text-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            className="w-full data-[state=active]:font-bold"
           >
             Template
           </TabsTrigger>
           <TabsTrigger
-            value="answers"
-            className="inline-flex items-center justify-center whitespace-nowrap py-1 text-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-          >
-            Answers
-          </TabsTrigger>
-          <TabsTrigger
             value="settings"
-            className="inline-flex items-center justify-center whitespace-nowrap py-1 text-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            className="w-full data-[state=active]:font-bold"
           >
             Settings
           </TabsTrigger>

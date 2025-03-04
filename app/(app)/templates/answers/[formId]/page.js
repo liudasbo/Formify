@@ -51,7 +51,7 @@ export default function FormAnswersPage({ params }) {
             <Badge key={tag.id}>{tag.label}</Badge>
           ))}
         </div>
-        <p>Author: {form.user.email}</p>
+        <p>Author: {form.template.userId} id</p>
         {form.template.questions.some((question) => question.required) && (
           <div className="border-t pt-2">
             <p className="text-sm text-destructive">
