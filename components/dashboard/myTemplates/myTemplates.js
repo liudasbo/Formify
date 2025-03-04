@@ -14,7 +14,11 @@ export default function MyTemplates({ userTemplates, refreshData }) {
 
   return (
     <div>
-      <Button onClick={() => router.push("/templates/new")} className="mb-3">
+      <Button
+        className="text-sm mb-2"
+        variant="outline"
+        onClick={() => router.push("/templates/new")}
+      >
         Create new
       </Button>
       <DataTable columns={columns(refreshData)} data={data} />

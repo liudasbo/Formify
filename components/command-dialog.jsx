@@ -81,13 +81,14 @@ export function CommandDialog() {
                   <CommandItem
                     key={template.id}
                     value={template.title}
-                    className="cursor-pointer"
+                    className="cursor-pointer mt-2"
                     onSelect={() => {
                       router.push(`/form/${template.id}`);
                       setOpen(false);
                     }}
                   >
-                    <span>{template.title}</span>
+                    <span className="font-bold">{template.title}</span>
+                    <span>created by: {template.userId}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>

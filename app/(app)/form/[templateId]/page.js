@@ -17,8 +17,8 @@ export default function Form() {
   const [author, setAuthor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState({});
-
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState(null);
 
   const { data: session, status } = useSession();
 
@@ -90,7 +90,29 @@ export default function Form() {
     }));
   };
 
+  const validateAnswers = () => {
+    const missingAnswers = template.questions.filter(
+      (question) =>
+        question.required &&
+        (!answers[question.id] ||
+          (Array.isArray(answers[question.id]) &&
+            answers[question.id].length === 0))
+    );
+
+    if (missingAnswers.length > 0) {
+      setValidationError("Please answer all required questions.");
+      return false;
+    }
+
+    setValidationError(null);
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!validateAnswers()) {
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const res = await fetch(`/api/form/submit`, {
@@ -116,6 +138,7 @@ export default function Form() {
       toast("Form submitted successfully!", { type: "success" });
     } catch (err) {
       console.error("Error", err.message);
+      setIsSubmitting(false);
     }
   };
 
@@ -165,6 +188,10 @@ export default function Form() {
           />
         ))}
       </div>
+
+      {validationError && (
+        <p className="text-red-500 mt-4 text-sm">{validationError}</p>
+      )}
 
       {session ? (
         <Button onClick={handleSubmit} className="mt-4">

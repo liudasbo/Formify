@@ -11,17 +11,11 @@ export default function Home() {
   if (status === "loading") return;
   return (
     <div>
-      <div>
-        <h2 className="scroll-m-20 border-b pb-2 text-xl text-muted-foreground">
+      <div className="flex flex-col gap-4">
+        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
           Latest templates
-        </h2>
+        </h3>
         <LatestTemplatesTable />
-      </div>
-
-      <div className="mt-20">
-        <h2 className="scroll-m-20 border-b pb-2 text-xl text-muted-foreground">
-          Top 5 popular templates
-        </h2>
       </div>
     </div>
   );

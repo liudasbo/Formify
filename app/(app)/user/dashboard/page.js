@@ -66,48 +66,55 @@ export default function Dashboard() {
   if (status === "loading" || loading) return <p>Loading...</p>;
 
   return (
-    <div className="flex flex-col gap-8">
-      <h1 className="text-4xl font-bold">My Dashboard</h1>
+    <div className="flex flex-col gap-6">
+      <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
+        My Dashboard
+      </h3>
 
       {error && <p className="text-red-500">{error}</p>}
 
-      <div className="border rounded-lg p-6 flex m-auto h-28 gap-4 shadow">
-        <div className="flex items-center gap-2">
-          <Avatar>
-            <AvatarFallback>{session.user.name.slice(0, 1)}</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="font-bold">{session.user.name}</p>
-            <p className="text-sm">{session.user.email}</p>
+      <div className="flex">
+        <div className="flex border rounded-lg shadow p-6 gap-6 justify-around">
+          {/* USER INFO */}
+          <div className="flex items-center gap-2">
+            <Avatar>
+              <AvatarFallback>{session.user.name.slice(0, 1)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-sm font-bold">{session.user.name}</p>
+              <p className="text-sm">{session.user.email}</p>
+            </div>
           </div>
-        </div>
 
-        <Separator orientation="vertical" />
+          <Separator orientation="vertical" />
 
-        <div className="flex flex-col items-center text-center gap-2">
-          <p className="text-sm">Templates created</p>
-          <p className="font-bold">{userTemplates.length}</p>
-        </div>
+          {/* Templates */}
+          <div className="text-center">
+            <p className="text-sm">Templates created</p>
+            <p className="text-sm font-bold">{userTemplates.length}</p>
+          </div>
 
-        <Separator orientation="vertical" />
+          <Separator orientation="vertical" />
 
-        <div className="flex flex-col items-center text-center gap-2">
-          <p className="text-sm">Forms filled</p>
-          <p className="font-bold">{userForms.length}</p>
+          {/* Forms */}
+          <div className="text-center">
+            <p className="text-sm">Forms filled</p>
+            <p className="text-sm font-bold">{userForms.length}</p>
+          </div>
         </div>
       </div>
 
       <Tabs defaultValue="myTemplates" className="w-full">
-        <TabsList className=" inline-flex h-9 items-center text-muted-foreground w-full justify-start rounded-none border-b bg-transparent p-0">
+        <TabsList className="w-full flex p-4 mb-6">
           <TabsTrigger
             value="myTemplates"
-            className="inline-flex items-center justify-center whitespace-nowrap py-1 text-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            className="w-full data-[state=active]:font-bold"
           >
             My templates
           </TabsTrigger>
           <TabsTrigger
             value="myForms"
-            className="inline-flex items-center justify-center whitespace-nowrap py-1 text-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            className="w-full data-[state=active]:font-bold"
           >
             My forms
           </TabsTrigger>
