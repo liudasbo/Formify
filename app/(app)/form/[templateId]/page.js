@@ -149,10 +149,10 @@ export default function Form() {
       {author.id === session?.user.id ? (
         <Button
           variant="secondary"
-          className="mb-4"
+          className="mb-6"
           onClick={() => router.push(`/templates/edit/${templateId}`)}
         >
-          Edit your template
+          Edit template
         </Button>
       ) : null}
       <div className="border p-6 rounded-lg flex flex-col gap-5 shadow">

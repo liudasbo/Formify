@@ -10,8 +10,11 @@ import MyTemplates from "@/components/dashboard/myTemplates/myTemplates";
 import MyForms from "@/components/dashboard/myForms/myForms";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { FilePlus } from "lucide-react";
+import { Files } from "lucide-react";
 
 import SalesForceDialog from "@/components/dashboard/salesForceDialog/salesForceDialog";
+import MyTickets from "@/components/dashboard/myTickets/myTickets";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -101,10 +104,10 @@ export default function Dashboard() {
 
       {error && <p className="text-red-500">{error}</p>}
 
-      <div className="flex">
+      <div className="flex ">
         {/* USER INFO */}
-        <div className="flex border rounded-lg shadow p-6 gap-6 justify-around">
-          <div className="flex items-center gap-3">
+        <div className="flex border rounded-lg shadow p-6 gap-4 justify-around w-full">
+          <div className="flex items-center gap-2">
             <Avatar>
               <AvatarFallback>{session.user.name.slice(0, 1)}</AvatarFallback>
             </Avatar>
@@ -117,30 +120,38 @@ export default function Dashboard() {
           <Separator orientation="vertical" />
 
           {/* Templates */}
-          <div className="text-center">
+          <div className="text-center flex flex-col gap-1">
             <p className="text-sm">Templates created</p>
-            <p className="text-sm font-bold">{userTemplates.length}</p>
+            <p className="text-sm font-bold flex items-center justify-center gap-2">
+              <FilePlus size={16} />
+              {userTemplates.length}
+            </p>
           </div>
 
           <Separator orientation="vertical" />
 
           {/* Forms */}
-          <div className="text-center">
+          <div className="text-center flex flex-col gap-1">
             <p className="text-sm">Forms filled</p>
-            <p className="text-sm font-bold">{userForms.length}</p>
+            <p className="text-sm font-bold flex items-center justify-center gap-2">
+              <Files size={16} /> {userForms.length}
+            </p>
           </div>
         </div>
       </div>
 
-      <div>
+      <div className="flex flex-col gap-1">
+        <p className="text-sm font-bold">Actions</p>
         {userData.isSyncedWithSalesforce ? (
-          <Button
-            variant="destructive"
-            onClick={handleUnlink}
-            disabled={isUnlinking}
-          >
-            {isUnlinking ? "Unlinking..." : "Unlink from Salesforce"}
-          </Button>
+          <div>
+            <Button
+              variant="destructive"
+              onClick={handleUnlink}
+              disabled={isUnlinking}
+            >
+              {isUnlinking ? "Unlinking..." : "Unlink from Salesforce"}
+            </Button>
+          </div>
         ) : (
           <SalesForceDialog user={session.user} fetchData={fetchData} />
         )}
@@ -160,12 +171,21 @@ export default function Dashboard() {
           >
             My forms
           </TabsTrigger>
+          <TabsTrigger
+            value="myTickets"
+            className="w-full data-[state=active]:font-bold"
+          >
+            My tickets
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="myTemplates">
           <MyTemplates userTemplates={userTemplates} refreshData={fetchData} />
         </TabsContent>
         <TabsContent value="myForms">
           <MyForms userForms={userForms} refreshData={fetchData} />
+        </TabsContent>
+        <TabsContent value="myTickets">
+          <MyTickets />
         </TabsContent>
       </Tabs>
     </div>
