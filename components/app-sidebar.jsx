@@ -8,6 +8,7 @@ import {
   Settings2,
   FileText,
   BookText,
+  Home,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -39,6 +40,11 @@ export function AppSidebar({ ...props }) {
       email: session ? session.user.email : "",
     },
     navMain: [
+      {
+        title: "Home",
+        url: "/",
+        icon: Home,
+      },
       {
         title: t("settings"),
         url: "/settings",
