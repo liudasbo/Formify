@@ -122,8 +122,8 @@ export default function Support() {
 
   return (
     <Dialog onOpenChange={(open) => !open && resetForm()}>
-      <DialogTrigger className="fixed bottom-6 right-6 p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-slate-50 z-50">
-        <LifeBuoy size={24} className="text-primary" />
+      <DialogTrigger className="fixed bottom-6 right-6 p-3 bg-background rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50">
+        <LifeBuoy size={24} />
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[500px]">

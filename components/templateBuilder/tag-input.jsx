@@ -9,8 +9,12 @@ import * as z from "zod";
 import { matchSorter } from "match-sorter";
 
 function TagInput({ onTagsChange, selectedTags }) {
-  // Validation
   const [error, setError] = useState("");
+  const [selected, setSelected] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [initialSuggestions, setInitialSuggestions] = useState([]);
+  const [value, setValue] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const tagSchema = z.object({
     label: z
@@ -22,6 +26,38 @@ function TagInput({ onTagsChange, selectedTags }) {
       }),
   });
 
+  useEffect(() => {
+    async function fetchTags() {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/tags");
+        if (!response.ok) throw new Error("Failed to fetch tags");
+
+        const data = await response.json();
+
+        const formattedTags = data.map((tag) => ({
+          value: tag.id,
+          label: tag.label,
+        }));
+
+        setInitialSuggestions(formattedTags);
+        setSuggestions(formattedTags);
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchTags();
+  }, []);
+
+  useEffect(() => {
+    if (selectedTags && selectedTags.length > 0) {
+      setSelected(selectedTags);
+    }
+  }, [selectedTags]);
+
   function validateTag(tag) {
     const result = tagSchema.safeParse(tag);
 
@@ -32,22 +68,6 @@ function TagInput({ onTagsChange, selectedTags }) {
       return false;
     }
   }
-
-  const [selected, setSelected] = useState([]);
-
-  useEffect(() => {
-    if (selectedTags && selectedTags.length > 0) {
-      setSelected(selectedTags);
-    }
-  }, [selectedTags]);
-
-  const initialSuggestions = [
-    { value: 3, label: "Bananas" },
-    { value: 4, label: "Mangos" },
-    { value: 5, label: "Lemons" },
-  ];
-
-  const [suggestions, setSuggestions] = useState(initialSuggestions);
 
   function onAdd(newTag) {
     const isTagAlreadyAdded = selected.some(
@@ -77,12 +97,45 @@ function TagInput({ onTagsChange, selectedTags }) {
 
   const onDelete = useCallback(
     (tagIndex) => {
+      const deletedTag = selected[tagIndex];
       const updatedSelected = selected.filter((_, i) => i !== tagIndex);
       setSelected(updatedSelected);
+
+      if (initialSuggestions.some((tag) => tag.value === deletedTag.value)) {
+        setSuggestions([...suggestions, deletedTag]);
+      }
+
       onTagsChange(updatedSelected);
     },
-    [selected, onTagsChange]
+    [selected, suggestions, initialSuggestions, onTagsChange]
   );
+
+  function onInput(value) {
+    setValue(value);
+    if (value.length === 0) {
+      const availableSuggestions = initialSuggestions.filter(
+        (suggestion) => !selected.some((tag) => tag.value === suggestion.value)
+      );
+      setSuggestions(availableSuggestions);
+    } else {
+      const filteredSuggestions = initialSuggestions.filter((suggestion) =>
+        suggestion.label.toLowerCase().includes(value.toLowerCase())
+      );
+      const availableSuggestions = filteredSuggestions.filter(
+        (suggestion) => !selected.some((tag) => tag.value === suggestion.value)
+      );
+      setSuggestions(availableSuggestions);
+    }
+  }
+
+  function suggestionsTransform(value, suggestions) {
+    if (value.length < 2) return [];
+    return matchSorter(suggestions, value, { keys: ["label"] });
+  }
+
+  function onShouldExpand(value) {
+    return value.length > 0;
+  }
 
   function CustomInput({ classNames, inputWidth, ...inputProps }) {
     return <Input style={{ width: "100%" }} {...inputProps} />;
@@ -132,31 +185,8 @@ function TagInput({ onTagsChange, selectedTags }) {
     );
   }
 
-  function onShouldExpand(value) {
-    return value.length > 0;
-  }
-
-  const [value, setValue] = useState("");
-
-  function onInput(value) {
-    setValue(value);
-    if (value.length === 0) {
-      setSuggestions([]);
-    } else {
-      const filteredSuggestions = initialSuggestions.filter((suggestion) =>
-        suggestion.label.toLowerCase().includes(value.toLowerCase())
-      );
-      const filteredOutSelected = filteredSuggestions.filter(
-        (suggestion) => !selected.some((tag) => tag.value === suggestion.value)
-      );
-      setSuggestions(filteredOutSelected);
-    }
-  }
-
-  function suggestionsTransform(value, suggestions) {
-    if (value.length < 2) return [];
-
-    return matchSorter(suggestions, value, { keys: ["label"] });
+  if (isLoading) {
+    return <div>Loading tags...</div>;
   }
 
   return (
@@ -170,7 +200,7 @@ function TagInput({ onTagsChange, selectedTags }) {
         onAdd={onAdd}
         suggestions={suggestions}
         onDelete={onDelete}
-        noOptionsText="No matching countries"
+        noOptionsText="No matching tags found"
         renderInput={CustomInput}
         renderTag={CustomTag}
         renderTagList={CustomTagList}

@@ -84,10 +84,15 @@ export default function EditTemplate() {
   if (loading) return <p>Loading...</p>;
   return (
     <div className="flex flex-col gap-6">
-      <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
-        Customize your template
-      </h3>
-      <Button className="ml-auto" type="button" onClick={handleUpdate}>
+      <div>
+        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
+          Edit your template
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Make changes to your template to fit your needs.
+        </p>
+      </div>
+      <Button type="button" onClick={handleUpdate}>
         {isUpdateBtnLoading ? (
           <>
             <Loader2 className="animate-spin" />

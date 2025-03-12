@@ -11,10 +11,15 @@ export default function Home() {
   if (status === "loading") return;
   return (
     <div>
-      <div className="flex flex-col gap-4">
-        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
-          Latest templates
-        </h3>
+      <div className="flex flex-col gap-6">
+        <div>
+          <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
+            Latest templates
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Click on the template to fill the form
+          </p>
+        </div>
         <LatestTemplatesTable />
       </div>
     </div>

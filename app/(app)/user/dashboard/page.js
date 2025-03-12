@@ -98,9 +98,14 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
-        My Dashboard
-      </h3>
+      <div>
+        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
+          My Dashboard
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          View your templates, submitted forms, and take action.
+        </p>
+      </div>
 
       {error && <p className="text-red-500">{error}</p>}
 

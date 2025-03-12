@@ -4,13 +4,17 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   try {
     const templates = await db.template.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      select: {
-        id: true,
-        title: true,
-        userId: true,
-        description: true,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
@@ -18,7 +22,7 @@ export async function GET(req) {
   } catch (error) {
     console.error("Error fetching templates:", error.message);
     return NextResponse.json(
-      { error: error.message || "Internal Server Error" },
+      { error: error.message || "Failed to fetch templates" },
       { status: 500 }
     );
   }

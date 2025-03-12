@@ -7,6 +7,7 @@ import FormQuestionItem from "@/components/form/formQuestionItem";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { Star } from "lucide-react";
 
 export default function Form() {
   const params = useParams();
@@ -145,16 +146,21 @@ export default function Form() {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div>
-      {author.id === session?.user.id ? (
-        <Button
-          variant="secondary"
-          className="mb-6"
-          onClick={() => router.push(`/templates/edit/${templateId}`)}
-        >
-          Edit template
+    <div className="flex flex-col">
+      <div className="flex items-center mb-6 gap-2">
+        {" "}
+        {author.id === session?.user.id ? (
+          <Button
+            variant="outline"
+            onClick={() => router.push(`/templates/edit/${templateId}`)}
+          >
+            Edit template
+          </Button>
+        ) : null}
+        <Button variant="outline">
+          <Star fill="black" />
         </Button>
-      ) : null}
+      </div>
       <div className="border p-6 rounded-lg flex flex-col gap-5 shadow">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
           {template.title}

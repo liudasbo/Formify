@@ -36,7 +36,7 @@ export default function NewTemplatePage() {
       <Button
         type="button"
         onClick={handlePublish}
-        className="ml-auto mb-6"
+        className="mb-6"
         disabled={isLoading}
       >
         {isLoading ? (
