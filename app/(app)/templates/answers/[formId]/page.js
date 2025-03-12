@@ -38,8 +38,15 @@ export default function FormAnswersPage({ params }) {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Template Answers</h1>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
+          Template Answers
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          View the responses submitted by users for your template.
+        </p>
+      </div>
       <div className="border p-6 rounded-lg flex flex-col gap-5 shadow mb-4">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
           {form.template.title}

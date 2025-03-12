@@ -75,6 +75,7 @@ export default function EditTemplate() {
       console.log(result.message);
       setIsUpdateBtnLoading(false);
       toast("Template updated successfully!", { type: "success" });
+      router.push(`/form/${id}`);
     } else {
       const error = await response.json();
       console.error("Update error:", error.error);

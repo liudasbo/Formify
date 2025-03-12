@@ -32,13 +32,17 @@ export default function NewTemplatePage() {
   };
 
   return (
-    <div className="flex flex-col">
-      <Button
-        type="button"
-        onClick={handlePublish}
-        className="mb-6"
-        disabled={isLoading}
-      >
+    <div className="flex flex-col gap-6">
+      <div>
+        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
+          Create New Template
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Design a custom template to fit your needs.
+        </p>
+      </div>
+
+      <Button type="button" onClick={handlePublish} disabled={isLoading}>
         {isLoading ? (
           <>
             <Loader2 className="animate-spin" />
