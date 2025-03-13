@@ -22,6 +22,13 @@ export async function GET(req, { params }) {
           },
         },
         tags: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 

@@ -7,6 +7,7 @@ import FormQuestionItem from "@/components/form/formQuestionItem";
 import { toast } from "sonner";
 import { Loader2, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
+import TemplateInformationCard from "@/components/templateInformationCard";
 
 export default function Form() {
   const params = useParams();
@@ -14,7 +15,6 @@ export default function Form() {
   const router = useRouter();
 
   const [template, setTemplate] = useState(null);
-  const [author, setAuthor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,8 +41,6 @@ export default function Form() {
         if (!userRes.ok) {
           throw new Error("Error fetching user");
         }
-        const userData = await userRes.json();
-        setAuthor(userData);
       } catch (err) {
         console.error("Error", err.message);
       } finally {
@@ -208,53 +206,33 @@ export default function Form() {
         </p>
       </div>
 
-      <div className="flex items-center mb-6 gap-2">
-        {author.id === session?.user.id ? (
+      <div className="flex flex-col gap-4">
+        {/* ACTIONS */}
+        <div className="flex items-center gap-2">
+          {template.user.id === session?.user.id ? (
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/templates/edit/${templateId}`)}
+            >
+              Edit template
+            </Button>
+          ) : null}
           <Button
             variant="outline"
-            onClick={() => router.push(`/templates/edit/${templateId}`)}
+            onClick={handleToggleLike}
+            disabled={likeLoading || !session}
+            className="flex items-center gap-1"
           >
-            Edit template
+            {likeLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Star className={liked ? "fill-yellow-400" : ""} />
+            )}
+            <span className="ml-1">{likesCount}</span>
           </Button>
-        ) : null}
-        <Button
-          variant="outline"
-          onClick={handleToggleLike}
-          disabled={likeLoading || !session}
-          className="flex items-center gap-1"
-        >
-          {likeLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Star className={liked ? "fill-yellow-400" : ""} />
-          )}
-          <span className="ml-1">{likesCount}</span>
-        </Button>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <div className="border p-6 rounded-lg flex flex-col gap-6 shadow">
-          <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-            {template.title}
-          </h2>
-          <p className="pt-2">{template.description}</p>
-          <p>Topic: {template.topic}</p>
-          <div className="flex gap-2">
-            {template.tags.map((tag) => (
-              <Badge key={tag.id}>{tag.label}</Badge>
-            ))}
-          </div>
-
-          <p>Author: {author.email}</p>
-
-          <div className="border-t pt-2">
-            {template.questions.some((question) => question.required) ? (
-              <p className="text-sm text-destructive">
-                * Indicates required question
-              </p>
-            ) : null}
-          </div>
         </div>
+
+        <TemplateInformationCard template={template} />
 
         <div className="flex flex-col gap-4">
           {template.questions.map((question) => (
@@ -269,8 +247,9 @@ export default function Form() {
         {validationError && (
           <p className="text-red-500 mt-4 text-sm">{validationError}</p>
         )}
+
         {session ? (
-          <Button onClick={handleSubmit}>
+          <Button onClick={handleSubmit} className="sm:mx-auto">
             {isSubmitting ? (
               <>
                 <Loader2 className="animate-spin" />

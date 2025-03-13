@@ -34,6 +34,13 @@ export async function GET(req, { params }) {
               },
             },
             tags: true, // Include related tags
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
           },
         },
         user: true, // Include user who submitted the form

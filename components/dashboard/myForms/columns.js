@@ -6,10 +6,21 @@ import { SquarePen, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+function truncateText(text, maxLength) {
+  if (text.length > maxLength) {
+    return text.slice(0, maxLength) + "...";
+  }
+  return text;
+}
+
 export const columns = (refreshData) => [
   {
     accessorKey: "template.title",
     header: "Title",
+    cell: ({ row }) => {
+      const title = row.original.template.title;
+      return <span title={title}>{truncateText(title, 20)}</span>;
+    },
   },
   {
     accessorKey: "createdAt",
