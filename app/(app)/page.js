@@ -65,9 +65,6 @@ export default function Home() {
                 Select a template to start filling out the form.
               </p>
             </CardTitle>
-            <Button variant="ghost" size="sm" className="mb-auto">
-              <Link href="/templates">View all</Link>
-            </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -85,9 +82,6 @@ export default function Home() {
                 Browse the templates with the highest user ratings.
               </p>
             </CardTitle>
-            <Button variant="ghost" size="sm" className="mb-auto">
-              <Link href="/templates">View all</Link>
-            </Button>
           </div>
         </CardHeader>
         <CardContent>

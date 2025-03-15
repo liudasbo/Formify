@@ -166,7 +166,7 @@ export const TemplatesTable = ({
                 {showCreatedAt && enableResponsive && !isMobile && (
                   <TableHead className="w-[15%]">Created</TableHead>
                 )}
-                <TableHead className="w-[15%]">
+                <TableHead className="w-[15%] min-w-[120px]">
                   {showAuthorEmail ? "Email" : "Author"}
                 </TableHead>
               </TableRow>
@@ -184,7 +184,7 @@ export const TemplatesTable = ({
                     className="group hover:bg-muted/50 cursor-pointer"
                     onClick={() => handleRowClick(template.id)}
                   >
-                    <TableCell className="font-medium max-w-44">
+                    <TableCell className="font-medium max-w-32">
                       <div className="flex items-center gap-2">
                         <BookText className="h-4 w-4 shrink-0 text-muted-foreground" />
                         <div className="truncate break-all">
@@ -224,7 +224,7 @@ export const TemplatesTable = ({
                       </TableCell>
                     )}
 
-                    <TableCell>
+                    <TableCell className="max-w-0 w-full">
                       <div className="flex items-center gap-1 overflow-hidden">
                         <User className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         <span className="truncate">

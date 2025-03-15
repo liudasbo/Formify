@@ -15,9 +15,22 @@ export async function GET(req) {
 
     const templates = await db.template.findMany({
       where: {
-        title: {
-          contains: query,
-          mode: "insensitive",
+        OR: [
+          {
+            title: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
         },
       },
     });
