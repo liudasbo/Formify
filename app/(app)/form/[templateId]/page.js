@@ -49,6 +49,9 @@ export default function Form() {
     }
 
     async function fetchForm() {
+      // Only fetch previous answers if user is logged in
+      if (!session) return;
+
       try {
         const res = await fetch(`/api/form/${templateId}`);
         if (!res.ok) {
@@ -97,9 +100,12 @@ export default function Form() {
     }
 
     fetchTemplate();
-    fetchForm();
+    // Only fetch form answers if user is authenticated
+    if (status === "authenticated") {
+      fetchForm();
+    }
     fetchLikeStatus();
-  }, [templateId, session]);
+  }, [templateId, session, status]);
 
   const handleToggleLike = async () => {
     if (!session) {

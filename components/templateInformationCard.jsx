@@ -22,7 +22,7 @@ const TemplateInformationCard = ({ template }) => {
       <CardHeader className="space-y-2">
         <CardTitle className="text-2xl break-all">{template.title}</CardTitle>
 
-        <CardDescription>
+        <CardDescription className="break-all">
           {template.description || "No description provided"}
         </CardDescription>
       </CardHeader>
