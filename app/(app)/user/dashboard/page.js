@@ -10,7 +10,7 @@ import MyTemplates from "@/components/dashboard/myTemplates/myTemplates";
 import MyForms from "@/components/dashboard/myForms/myForms";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { FilePlus } from "lucide-react";
+import { FilePlus, Loader2 } from "lucide-react";
 import { Files } from "lucide-react";
 
 import SalesForceDialog from "@/components/dashboard/salesForceDialog/salesForceDialog";
@@ -94,7 +94,13 @@ export default function Dashboard() {
     }
   }, [status, userId, router, fetchData]);
 
-  if (status === "loading" || loading) return <p>Loading...</p>;
+  if (status === "loading") {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">

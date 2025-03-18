@@ -143,7 +143,7 @@ function TagInput({ onTagsChange, selectedTags }) {
 
   function CustomTag({ classNames, tag, ...tagProps }) {
     return (
-      <Badge type="button">
+      <Badge type="button" className="mb-2">
         <span className={classNames.tagName}>{tag.label}</span>
         <X size={12} {...tagProps} className="ml-1 cursor-pointer" />
       </Badge>
@@ -152,7 +152,7 @@ function TagInput({ onTagsChange, selectedTags }) {
 
   function CustomTagList({ children, classNames, ...tagListprops }) {
     return (
-      <ul className="flex gap-2 mb-2 flex-wrap" {...tagListprops}>
+      <ul className="flex gap-2 flex-wrap" {...tagListprops}>
         {React.Children.map(children, (child) => (
           <li className={classNames.tagListItem} key={child.key}>
             {child}

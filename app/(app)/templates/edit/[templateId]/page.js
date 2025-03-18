@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import TemplateBuilder from "@/components/templateBuilder/template-builder";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { AnswersTable } from "@/components/templateAnswersTable/answersTable";
@@ -82,27 +82,54 @@ export default function EditTemplate() {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`/api/template/delete/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        toast.success("Template deleted successfully");
+        router.push("/user/dashboard");
+      } else {
+        console.error("Failed to delete template");
+        toast.error("Failed to delete template");
+      }
+    } catch (error) {
+      console.error("Error deleting template:", error);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
-          Edit your template
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          Make changes to your template to fit your needs.
-        </p>
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
+        <div>
+          <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
+            Edit your template
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Make changes to your template to fit your needs.
+          </p>
+        </div>
+
+        <div className="flex gap-2 items-start justify-start">
+          <Button type="button" onClick={handleUpdate}>
+            {isUpdateBtnLoading ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Loading...
+              </>
+            ) : (
+              "Update"
+            )}
+          </Button>
+
+          <Button onClick={handleDelete} variant="destructive" type="button">
+            <Trash2 />
+          </Button>
+        </div>
       </div>
-      <Button type="button" onClick={handleUpdate}>
-        {isUpdateBtnLoading ? (
-          <>
-            <Loader2 className="animate-spin" />
-            Loading...
-          </>
-        ) : (
-          "Update"
-        )}
-      </Button>
+
       <Tabs defaultValue="template" className="w-full">
         <TabsList className="w-full flex p-4 mb-6">
           <TabsTrigger

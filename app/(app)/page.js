@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Loader2, PlusCircle, Clock, ThumbsUp } from "lucide-react";
-import { TemplatesTable } from "@/components/templatesTable";
+import { FormsTable } from "@/components/formsTable";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -49,43 +49,33 @@ export default function Home() {
               </Button>
             )}
             <Button variant="outline" asChild>
-              <Link href="/templates">Browse all templates</Link>
+              <Link href="/browse/forms">Browse all forms</Link>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Latest templates */}
+      {/* Latest forms */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle>
-              Latest templates
-              <p className="text-sm text-muted-foreground font-normal">
-                Select a template to start filling out the form.
-              </p>
-            </CardTitle>
+            <CardTitle>Latest forms</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <TemplatesTable showAuthorEmail />
+          <FormsTable showAuthorEmail />
         </CardContent>
       </Card>
 
-      {/* Most liked templates */}
+      {/* Most liked forms */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle>
-              Most liked templates
-              <p className="text-sm text-muted-foreground font-normal">
-                Browse the templates with the highest user ratings.
-              </p>
-            </CardTitle>
+            <CardTitle>Most liked forms</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <TemplatesTable
+          <FormsTable
             showLikes
             sortBy={"likes"}
             showAuthorEmail

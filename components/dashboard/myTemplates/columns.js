@@ -43,7 +43,6 @@ export const columns = (refreshData) => [
       const handleDelete = async () => {
         const id = row.original.id;
         try {
-          console.log("Deleting template with ID:", id);
           const res = await fetch(`/api/template/delete/${id}`, {
             method: "DELETE",
           });
