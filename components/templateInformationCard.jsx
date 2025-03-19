@@ -9,6 +9,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import dayjs from "dayjs";
+import ReactMarkdown from "react-markdown";
 
 const TemplateInformationCard = ({ template }) => {
   if (!template) return null;
@@ -20,11 +21,17 @@ const TemplateInformationCard = ({ template }) => {
   return (
     <Card>
       <CardHeader className="space-y-2">
-        <CardTitle className="text-2xl break-all">{template.title}</CardTitle>
+        <CardTitle className="text-3xl break-all">{template.title}</CardTitle>
 
-        <CardDescription className="break-all">
-          {template.description || "No description provided"}
-        </CardDescription>
+        {template.description ? (
+          <div className="prose prose-sm dark:prose-invert max-w-none">
+            <ReactMarkdown>{template.description}</ReactMarkdown>
+          </div>
+        ) : (
+          <CardDescription className="break-all">
+            No description provided
+          </CardDescription>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-4">

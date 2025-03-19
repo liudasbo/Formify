@@ -24,6 +24,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// Funkcija, kuri pašalina Markdown žymėjimą
+const stripMarkdown = (markdown) => {
+  if (!markdown) return "";
+
+  return (
+    markdown
+      // Pašalina antraščių žymėjimą (# Heading)
+      .replace(/^#+\s/gm, "")
+      // Pašalina žymėjimus ** ir __ (Bold)
+      .replace(/(\*\*|__)(.*?)\1/g, "$2")
+      // Pašalina žymėjimus * ir _ (Italic)
+      .replace(/(\*|_)(.*?)\1/g, "$2")
+      // Pašalina kodo blokus
+      .replace(/```[\s\S]*?```/g, "")
+      // Pašalina inline kodo fragmentus
+      .replace(/`([^`]+)`/g, "$1")
+      // Pašalina nuorodas [text](url)
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      // Pašalina sąrašo elementų žymėjimą
+      .replace(/^[*+-]\s/gm, "")
+      // Pašalina numeruotų sąrašų žymėjimą
+      .replace(/^\d+\.\s/gm, "")
+      // Sutvarko dvigubus tarpus
+      .replace(/\s+/g, " ")
+      .trim()
+  );
+};
+
 export const FormsTable = ({
   emptyMessage = "No forms found",
   emptySearchMessage = "No forms matching your search",
@@ -283,7 +311,7 @@ export const FormsTable = ({
                       {showDescription && enableResponsive && !isMobile && (
                         <TableCell className="text-muted-foreground">
                           <div className="line-clamp-2 break-all">
-                            {template.description}
+                            {stripMarkdown(template.description)}
                           </div>
                         </TableCell>
                       )}

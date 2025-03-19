@@ -28,13 +28,18 @@ import {
   ScrollText,
   BarChart3,
   FileSpreadsheet,
+  Eye,
+  Edit2,
 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ReactMarkdown from "react-markdown";
 
 export default function TemplateBuilder({ handleTemplateData, initialData }) {
   const [title, setTitle] = useState(initialData?.title || "Unnamed");
   const [description, setDescription] = useState(
     initialData?.description || ""
   );
+  const [descriptionView, setDescriptionView] = useState("edit");
   const [topic, setTopic] = useState(initialData?.topic || "other");
   const [tags, setTags] = useState(initialData?.tags || []);
   const [questions, setQuestions] = useState(initialData?.questions || []);
@@ -105,15 +110,21 @@ export default function TemplateBuilder({ handleTemplateData, initialData }) {
               />
             </div>
 
-            {/* Description Field */}
+            {/* Description Field with Markdown */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm flex items-center gap-1.5">
-                  <MessageSquare className="h-4 w-4 " />
+                  <MessageSquare className="h-4 w-4" />
                   Description
-                  <span className="text-muted-foreground font-normal text-xs ml-1 bg-muted px-1.5 py-0.5 rounded">
+                  <a
+                    href="https://commonmark.org/help/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground font-normal text-xs ml-1 bg-muted px-1.5 py-0.5 rounded hover:bg-muted/80 hover:underline cursor-pointer transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     supports markdown
-                  </span>
+                  </a>
                 </p>
                 <span
                   className={`text-xs px-2 py-0.5 rounded-md transition-colors ${
@@ -125,14 +136,70 @@ export default function TemplateBuilder({ handleTemplateData, initialData }) {
                   {description.length}/500
                 </span>
               </div>
-              <Textarea
-                id="description"
-                placeholder="Describe your form purpose and content..."
-                className="h-24"
-                maxLength={500}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+
+              <Tabs
+                value={descriptionView}
+                onValueChange={setDescriptionView}
+                className="w-full"
+              >
+                <TabsList className="mb-2">
+                  <TabsTrigger
+                    value="edit"
+                    className="flex items-center gap-2 text-xs"
+                  >
+                    <Edit2 className="h-3.5 w-3.5" />
+                    Edit
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="preview"
+                    className="flex items-center gap-2 text-xs"
+                  >
+                    <Eye className="h-3.5 w-3.5" />
+                    Preview
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="edit" className="mt-0">
+                  <Textarea
+                    id="description"
+                    placeholder="Describe your template..."
+                    className="h-36 text-sm"
+                    maxLength={500}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                  <div className="text-xs text-muted-foreground mt-1.5">
+                    <span>Use markdown: </span>
+                    <code className="px-1 py-0.5 bg-muted rounded">
+                      **bold**
+                    </code>
+                    <span>, </span>
+                    <code className="px-1 py-0.5 bg-muted rounded">
+                      *italic*
+                    </code>
+                    <span>, </span>
+                    <code className="px-1 py-0.5 bg-muted rounded">
+                      ## Heading
+                    </code>
+                    <span>, </span>
+                    <code className="px-1 py-0.5 bg-muted rounded">
+                      [link](url)
+                    </code>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="preview" className="mt-0">
+                  <div className="border rounded-md p-3 bg-muted prose dark:prose-invert w-full max-w-none">
+                    {description ? (
+                      <ReactMarkdown>{description}</ReactMarkdown>
+                    ) : (
+                      <p className="text-muted-foreground italic text-sm">
+                        Preview will appear here...
+                      </p>
+                    )}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
 
             <Separator className="my-4" />
