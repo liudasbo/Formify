@@ -67,24 +67,6 @@ export default function TemplateBuilder({ handleTemplateData, initialData }) {
     handleTemplateData({ title, description, topic, tags, questions });
   }, [title, description, topic, tags, questions]);
 
-  // Get icon for topic
-  const getTopicIcon = (topicValue) => {
-    switch (topicValue) {
-      case "education":
-        return <GraduationCap className="h-4 w-4" />;
-      case "quiz":
-        return <ScrollText className="h-4 w-4" />;
-      case "feedback":
-        return <MessageSquare className="h-4 w-4" />;
-      case "survey":
-        return <BarChart3 className="h-4 w-4" />;
-      case "application":
-        return <FileSpreadsheet className="h-4 w-4" />;
-      default:
-        return <BookText className="h-4 w-4" />;
-    }
-  };
-
   return (
     <div className="flex flex-col gap-4">
       {/* Template Details Card */}

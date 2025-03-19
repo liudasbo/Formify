@@ -22,6 +22,7 @@ export default function Form() {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [likeLoading, setLikeLoading] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false); // Add state for tracking if this is an update
 
   const { data: session, status } = useSession();
 
@@ -79,6 +80,9 @@ export default function Form() {
           }
         });
         setAnswers(initialAnswers);
+
+        // If we found previous answers, set isUpdate to true
+        setIsUpdate(data.answers.length > 0);
       } catch (err) {
         console.error("Error", err.message);
       }
@@ -192,14 +196,25 @@ export default function Form() {
       }
 
       setIsSubmitting(false);
-      toast("Form submitted successfully!", { type: "success" });
+      toast(
+        isUpdate
+          ? "Form updated successfully!"
+          : "Form submitted successfully!",
+        { type: "success" }
+      );
     } catch (err) {
       console.error("Error", err.message);
       setIsSubmitting(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -261,6 +276,8 @@ export default function Form() {
                 <Loader2 className="animate-spin" />
                 Loading...
               </>
+            ) : isUpdate ? (
+              "Update"
             ) : (
               "Submit"
             )}

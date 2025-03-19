@@ -8,11 +8,21 @@ import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { AnswersTable } from "@/components/templateAnswersTable/answersTable";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function EditTemplate() {
   const [templateData, setTemplateData] = useState({});
   const [loading, setLoading] = useState(true);
   const [isUpdateBtnLoading, setIsUpdateBtnLoading] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -51,7 +61,7 @@ export default function EditTemplate() {
       templateData.userId !== session.user.id
     ) {
       toast.error("You do not have permission to edit this template.");
-      router.push("/"); // Redirect to home or another appropriate page
+      router.push("/");
     }
   }, [status, templateData, session, router]);
 
@@ -82,8 +92,13 @@ export default function EditTemplate() {
     }
   };
 
+  const openDeleteDialog = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
   const handleDelete = async () => {
     try {
+      setIsDeleting(true);
       const res = await fetch(`/api/template/delete/${id}`, {
         method: "DELETE",
       });
@@ -96,13 +111,24 @@ export default function EditTemplate() {
       }
     } catch (error) {
       console.error("Error deleting template:", error);
+      toast.error("An error occurred while deleting the template");
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteDialogOpen(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (status === "loading") {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
+      <div className="flex flex-col gap-6 sm:flex-row sm:justify-between">
         <div>
           <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
             Edit your template
@@ -113,7 +139,11 @@ export default function EditTemplate() {
         </div>
 
         <div className="flex gap-2 items-start justify-start">
-          <Button type="button" onClick={handleUpdate}>
+          <Button
+            type="button"
+            onClick={handleUpdate}
+            className="w-full sm:w-auto"
+          >
             {isUpdateBtnLoading ? (
               <>
                 <Loader2 className="animate-spin" />
@@ -124,14 +154,19 @@ export default function EditTemplate() {
             )}
           </Button>
 
-          <Button onClick={handleDelete} variant="destructive" type="button">
+          <Button
+            onClick={openDeleteDialog}
+            variant="destructive"
+            type="button"
+            className="w-full sm:w-auto"
+          >
             <Trash2 />
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="template" className="w-full">
-        <TabsList className="w-full flex p-4 mb-6">
+        <TabsList className="w-full">
           <TabsTrigger
             value="template"
             className="w-full data-[state=active]:font-bold"
@@ -139,10 +174,10 @@ export default function EditTemplate() {
             Template
           </TabsTrigger>
           <TabsTrigger
-            value="answers"
+            value="results"
             className="w-full data-[state=active]:font-bold"
           >
-            Answers
+            Results
           </TabsTrigger>
           <TabsTrigger
             value="settings"
@@ -157,11 +192,49 @@ export default function EditTemplate() {
             initialData={templateData}
           />
         </TabsContent>
-        <TabsContent value="answers">
+        <TabsContent value="results">
           <AnswersTable templateId={id} />
         </TabsContent>
         <TabsContent value="settings">Settings</TabsContent>
       </Tabs>
+
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              Delete Template?
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this template? This action cannot
+              be undone and all associated form submissions will be permanently
+              removed.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete Template"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

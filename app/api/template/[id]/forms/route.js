@@ -16,6 +16,18 @@ export async function GET(req, { params }) {
       where: {
         templateId: templateId,
       },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc", // Newest first
+      },
     });
 
     return NextResponse.json(forms);

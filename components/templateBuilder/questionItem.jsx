@@ -38,8 +38,8 @@ const QuestionItem = ({
 
   return (
     <div ref={setNodeRef} style={style} className="bg-background">
-      <Card>
-        <CardHeader className="p-0">
+      <Card className="overflow-hidden">
+        <CardHeader className="p-0 bg-muted">
           <div
             {...attributes}
             {...listeners}

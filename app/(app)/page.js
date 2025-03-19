@@ -35,19 +35,18 @@ export default function Home() {
             data efficiently. Get started now by creating a new template or
             using an existing one.
           </p>
-          <div className="flex flex-wrap gap-2">
+
+          <div className="flex gap-2">
             {session ? (
               <Button asChild>
-                <Link href="/templates/new">
-                  <PlusCircle />
-                  Create template
-                </Link>
+                <Link href="/templates/new">Create template</Link>
               </Button>
             ) : (
               <Button asChild>
                 <Link href="/login">Log In</Link>
               </Button>
             )}
+
             <Button variant="outline" asChild>
               <Link href="/browse/forms">Browse all forms</Link>
             </Button>

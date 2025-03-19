@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { User, Calendar } from "lucide-react";
+import { User, Calendar, Mail } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -18,7 +18,7 @@ const TemplateInformationCard = ({ template }) => {
   ).length;
 
   return (
-    <Card className="shadow-sm">
+    <Card>
       <CardHeader className="space-y-2">
         <CardTitle className="text-2xl break-all">{template.title}</CardTitle>
 
@@ -51,21 +51,23 @@ const TemplateInformationCard = ({ template }) => {
         )}
       </CardContent>
 
-      <CardFooter className="border-t pt-4 pb-4 flex justify-between items-center text-xs text-muted-foreground">
-        <div className="flex items-center gap-2">
+      <CardFooter className="border-t pt-4 pb-4 flex justify-between items-center text-xs text-muted-foreground flex-wrap gap-4">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
             <User className="h-3.5 w-3.5" />
-            <span>{template.user?.email || "Unknown"}</span>
+            <span>{template.user?.name}</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Mail className="h-3.5 w-3.5" />
+            <span>{template.user?.email}</span>
           </div>
 
           {template.createdAt && (
-            <>
-              <span>•</span>
-              <div className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5" />
-                <span>{dayjs(template.createdAt).format("MMM D, YYYY")}</span>
-              </div>
-            </>
+            <div className="flex items-center gap-1">
+              <Calendar className="h-3.5 w-3.5" />
+              <span>{dayjs(template.createdAt).format("MMM D, YYYY")}</span>
+            </div>
           )}
         </div>
 

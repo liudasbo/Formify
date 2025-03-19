@@ -8,7 +8,7 @@ export default function BrowseFormsPage() {
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle>Browse forms;;</CardTitle>
+            <CardTitle>Browse forms</CardTitle>
           </div>
         </CardHeader>
         <CardContent>

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import TemplateInformationCard from "@/components/templateInformationCard";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { format, formatDistanceToNow } from "date-fns";
 import {
   User,
   Calendar,
@@ -16,6 +17,8 @@ import {
   Check,
   ClipboardList,
   Hash,
+  Clock,
+  Mail,
 } from "lucide-react";
 
 export default function FormAnswersPage({ params }) {
@@ -76,6 +79,17 @@ export default function FormAnswersPage({ params }) {
     }).format(date);
   };
 
+  // Check if form was updated (more than 1 minute difference between created and updated)
+  const wasUpdated = () => {
+    if (!form || !form.updatedAt || !form.createdAt) return false;
+
+    const createdDate = new Date(form.createdAt).getTime();
+    const updatedDate = new Date(form.updatedAt).getTime();
+
+    // Check if there's at least a 1-minute difference
+    return Math.abs(updatedDate - createdDate) > 60000;
+  };
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
@@ -103,22 +117,60 @@ export default function FormAnswersPage({ params }) {
 
       <TemplateInformationCard template={form.template} />
 
-      <Card className="shadow-sm">
+      <Card>
         <CardHeader className="pb-3 pt-4">
-          <h2 className="text-base font-medium">Submission Information</h2>
+          <h2 className="text-base font-bold">Submission Information</h2>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-sm">
-              <User className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">Submitted by:</span>
-              <span>{form.user.email}</span>
+          <div className="text-sm flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="font-bold">Submitted by:</p>
+              <div className="flex flex-col gap-1">
+                <span className="flex gap-2 items-center">
+                  <User size={14} className="text-muted-foreground" />{" "}
+                  {form.user?.name}
+                </span>
+                <span className="flex gap-2 items-center">
+                  <Mail size={14} className="text-muted-foreground" />{" "}
+                  {form.user?.email}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">Submitted at:</span>
-              <span>{formatDate(form.createdAt)}</span>
+
+            <div className="flex flex-col gap-1">
+              <p className="font-bold">Submitted:</p>
+              <div className="flex flex-col">
+                <span className="flex gap-2 items-center">
+                  <Calendar size={14} className="text-muted-foreground" />{" "}
+                  {format(new Date(form.createdAt), "MMM d, yyyy HH:mm")}
+                  <Badge variant="outline" className="ml-1 text-xs font-normal">
+                    {formatDistanceToNow(new Date(form.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </Badge>
+                </span>
+              </div>
             </div>
+
+            {wasUpdated() && (
+              <div className="flex flex-col gap-1">
+                <p className="font-bold">Last edited:</p>
+                <div className="flex flex-col">
+                  <span className="flex gap-2 items-center">
+                    <Clock size={14} className="text-muted-foreground" />{" "}
+                    {format(new Date(form.updatedAt), "MMM d, yyyy HH:mm")}
+                    <Badge
+                      variant="outline"
+                      className="ml-1 text-xs font-normal"
+                    >
+                      {formatDistanceToNow(new Date(form.updatedAt), {
+                        addSuffix: true,
+                      })}
+                    </Badge>
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

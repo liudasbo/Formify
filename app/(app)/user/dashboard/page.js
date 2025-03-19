@@ -169,7 +169,7 @@ export default function Dashboard() {
       </div>
 
       <Tabs defaultValue="myTemplates" className="w-full">
-        <TabsList className="w-full flex p-4 mb-6">
+        <TabsList className="w-full">
           <TabsTrigger
             value="myTemplates"
             className="w-full data-[state=active]:font-bold"

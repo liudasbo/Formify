@@ -23,12 +23,23 @@ export async function POST(req) {
       },
     });
 
+    let isUpdate = false;
+
     if (!form) {
+      // Create new form if it doesn't exist
       form = await db.form.create({
         data: {
           templateId: templateId,
           userId: userId,
-          createdAt: new Date(),
+        },
+      });
+    } else {
+      // Update existing form with explicit updatedAt to ensure it gets updated
+      isUpdate = true;
+      form = await db.form.update({
+        where: { id: form.id },
+        data: {
+          updatedAt: new Date(), // Explicitly update timestamp instead of empty object
         },
       });
     }
@@ -154,7 +165,9 @@ export async function POST(req) {
     );
 
     return NextResponse.json({
-      message: "Form and answers submitted successfully!",
+      message: isUpdate
+        ? "Form updated successfully!"
+        : "Form submitted successfully!",
       form,
       createdOrUpdatedAnswers,
     });

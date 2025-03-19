@@ -12,15 +12,7 @@ import {
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  BookText,
-  Calendar,
-  Search,
-  User,
-  Star,
-  ThumbsUp,
-  Filter,
-} from "lucide-react";
+import { BookText, Calendar, Search, User, Star, Filter } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -154,9 +146,8 @@ export const FormsTable = ({
   // Render empty state
   if (templates.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 border rounded-md bg-muted/10">
-        <BookText className="h-10 w-10 text-muted mb-2" />
-        <h3 className="text-lg font-medium">{emptyMessage}</h3>
+      <div className="flex flex-col items-center justify-center p-12 border rounded-md bg-muted/10">
+        <h3 className="text-lg font-bold">{emptyMessage}</h3>
         <p className="text-sm text-muted-foreground">
           Templates will appear here once created.
         </p>
@@ -208,7 +199,6 @@ export const FormsTable = ({
 
       {filteredTemplates.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-10 border rounded-md bg-muted/10">
-          <ThumbsUp className="h-10 w-10 text-muted mb-2" />
           <h3 className="text-lg font-medium">
             {showLikes
               ? "No liked templates found"

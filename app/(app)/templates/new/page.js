@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import TemplateBuilder from "@/components/templateBuilder/template-builder";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function NewTemplatePage() {
   const [templateData, setTemplateData] = useState({});
@@ -16,18 +17,28 @@ export default function NewTemplatePage() {
   };
 
   const handlePublish = async () => {
-    setIsLoading(true);
-    const data = templateData;
-    const response = await fetch("/api/template/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    try {
+      setIsLoading(true);
+      const data = templateData;
+      const response = await fetch("/api/template/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    if (response.ok) {
-      router.push("/user/dashboard");
+      if (response.ok) {
+        const result = await response.json();
+        toast.success("Template created successfully");
+        router.push(`/form/${result.template.id}`);
+      } else {
+        console.error("Failed to create template");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error creating template:", error);
+      setIsLoading(false);
     }
   };
 
@@ -55,7 +66,7 @@ export default function NewTemplatePage() {
       </div>
 
       <Tabs defaultValue="template" className="w-full">
-        <TabsList className="w-full flex p-4 mb-6">
+        <TabsList className="w-full flex">
           <TabsTrigger
             value="template"
             className="w-full data-[state=active]:font-bold"
