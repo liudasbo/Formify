@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Loader2, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
 import TemplateInformationCard from "@/components/templateInformationCard";
+import Loading from "@/components/Loading";
 
 export default function Form() {
   const params = useParams();
@@ -209,11 +210,7 @@ export default function Form() {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
@@ -230,7 +227,7 @@ export default function Form() {
       <div className="flex flex-col gap-4">
         {/* ACTIONS */}
         <div className="flex items-center gap-2">
-          {template.user.id === session?.user.id ? (
+          {template.user.id === session?.user.id || session?.user.isAdmin ? (
             <Button
               variant="outline"
               onClick={() => router.push(`/templates/edit/${templateId}`)}

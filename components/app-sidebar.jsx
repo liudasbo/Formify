@@ -10,6 +10,7 @@ import {
   BookText,
   Home,
   Search,
+  UserRoundCog,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -33,7 +34,31 @@ import Link from "next/link";
 export function AppSidebar({ ...props }) {
   const { data: session, status } = useSession();
   const { t } = useTranslation();
-  if (status === "loading") return;
+
+  if (status === "loading") return null;
+
+  console.log(session);
+
+  const userMenuItems = [
+    {
+      title: "My dashboard",
+      url: "/user/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Create new template",
+      url: "/templates/new",
+      icon: FileText,
+    },
+  ];
+
+  if (session?.user?.isAdmin) {
+    userMenuItems.push({
+      title: "Admin",
+      url: "/admin",
+      icon: UserRoundCog,
+    });
+  }
 
   const sidebarData = {
     user: {
@@ -69,18 +94,7 @@ export function AppSidebar({ ...props }) {
         icon: Send,
       },
     ],
-    User: [
-      {
-        title: "My dashboard",
-        url: "/user/dashboard",
-        icon: LayoutDashboard,
-      },
-      {
-        title: "Create new template",
-        url: "/templates/new",
-        icon: FileText,
-      },
-    ],
+    User: userMenuItems,
   };
 
   return (
@@ -109,7 +123,6 @@ export function AppSidebar({ ...props }) {
       <SidebarContent>
         <NavMain items={sidebarData.navMain} />
         {session ? <NavProjects projects={sidebarData.User} /> : null}
-        {/* <NavSecondary items={sidebarData.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
         {session ? (

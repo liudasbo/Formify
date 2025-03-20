@@ -7,17 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Loader2, PlusCircle, Clock, ThumbsUp } from "lucide-react";
 import { FormsTable } from "@/components/formsTable";
+import Loading from "@/components/Loading";
 
 export default function Home() {
   const { data: session, status } = useSession();
   const { t } = useTranslation();
 
   if (status === "loading") {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-      </div>
-    );
+    return <Loading />;
   }
 
   return (

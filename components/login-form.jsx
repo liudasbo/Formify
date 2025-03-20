@@ -51,7 +51,17 @@ export function LoginForm({ className, ...props }) {
 
     if (signInData.error) {
       console.log(signInData.error);
-      setError("form", { message: t("loginForm.invalidCredentials") });
+
+      if (signInData.error.includes("blocked")) {
+        setError("form", {
+          message:
+            t("loginForm.accountBlocked") ||
+            "Your account has been blocked. Please contact an administrator.",
+        });
+      } else {
+        setError("form", { message: t("loginForm.invalidCredentials") });
+      }
+
       setIsLoading(false);
     } else {
       router.push("/");

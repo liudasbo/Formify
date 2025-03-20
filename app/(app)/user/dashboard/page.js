@@ -15,6 +15,7 @@ import { Files } from "lucide-react";
 
 import SalesForceDialog from "@/components/dashboard/salesForceDialog/salesForceDialog";
 import MyTickets from "@/components/dashboard/myTickets/myTickets";
+import Loading from "@/components/Loading";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -95,11 +96,7 @@ export default function Dashboard() {
   }, [status, userId, router, fetchData]);
 
   if (status === "loading") {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-      </div>
-    );
+    return <Loading />;
   }
 
   return (

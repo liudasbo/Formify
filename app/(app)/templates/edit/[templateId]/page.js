@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import FormStatistics from "@/components/formStatistics";
+import Loading from "@/components/Loading";
 
 export default function EditTemplate() {
   const [templateData, setTemplateData] = useState({});
@@ -62,8 +63,9 @@ export default function EditTemplate() {
   useEffect(() => {
     if (
       status === "authenticated" &&
-      templateData.userId &&
-      templateData.userId !== session.user.id
+      templateData?.userId &&
+      templateData.userId !== session.user.id &&
+      !session.user.isAdmin
     ) {
       toast.error("You do not have permission to edit this template.");
       router.push("/");
@@ -125,11 +127,7 @@ export default function EditTemplate() {
   };
 
   if (status === "loading" || loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-      </div>
-    );
+    return <Loading />;
   }
 
   return (

@@ -20,6 +20,8 @@ model User {
   salesforceContactId    String?
   isSyncedWithSalesforce Boolean        @default(false)
   likedTemplates         TemplateLike[]
+  isAdmin                Boolean        @default(false)
+  isBlocked              Boolean        @default(false)
 }
 
 model Template {
