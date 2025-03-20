@@ -16,6 +16,8 @@ import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 import { useSession } from "next-auth/react";
+import { ModeToggle } from "./modeToggle";
+import LanguageSwitcher from "./languageSwitcher";
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar();
@@ -39,6 +41,10 @@ export function SiteHeader() {
         <Separator orientation="vertical" className="mr-2 h-4" />
 
         <CommandDialog />
+
+        <ModeToggle />
+
+        <LanguageSwitcher />
       </div>
     </header>
   );

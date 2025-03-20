@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Check, Globe, ChevronDown } from "lucide-react";
+import { Check, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const languages = [
@@ -20,7 +20,6 @@ const languages = [
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
   const [currentLang, setCurrentLang] = useState("en"); // Default to 'en' to match server
-  const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -45,7 +44,6 @@ const LanguageSwitcher = () => {
       await i18n.changeLanguage(langCode);
       localStorage.setItem("language", langCode);
       setCurrentLang(langCode);
-      setIsOpen(false);
     } catch (error) {
       console.error("Failed to change language:", error);
     }
@@ -57,33 +55,18 @@ const LanguageSwitcher = () => {
   const currentLanguage = languages.find((lang) => lang.code === currentLang);
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="w-[110px] justify-between h-9 px-3 py-2"
-        >
-          <div className="flex items-center gap-2">
-            <Globe className="h-4 w-4" />
-            <span>{currentLanguage?.code.toUpperCase()}</span>
-          </div>
-          <ChevronDown
-            className={cn(
-              "h-4 w-4 transition-transform",
-              isOpen ? "rotate-180" : "rotate-0"
-            )}
-          />
+        <Button variant="ghost" size="icon" className="px-3">
+          <Globe />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
+      <DropdownMenuContent align="end">
         {languages.map((language) => (
           <DropdownMenuItem
             key={language.code}
             onClick={() => changeLanguage(language.code)}
-            className={cn(
-              "flex items-center gap-2 cursor-pointer",
-              currentLang === language.code ? "bg-accent" : ""
-            )}
+            className="flex items-center gap-2 cursor-pointer"
           >
             <span className="mr-1">{language.flag}</span>
             {language.name}

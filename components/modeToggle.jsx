@@ -10,14 +10,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sun, Moon, Monitor, Check, ChevronDown } from "lucide-react";
+import { Sun, Moon, Monitor, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function ModeToggle() {
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation();
   const [mounted, setMounted] = React.useState(false);
-  const [isOpen, setIsOpen] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
@@ -25,47 +24,31 @@ export function ModeToggle() {
 
   if (!mounted) return null;
 
-  // Helper function to determine which text and icon to display
-  const getThemeInfo = () => {
+  // Helper function to determine which icon to display based on current theme
+  const getThemeIcon = () => {
     switch (theme) {
       case "light":
-        return { icon: <Sun className="h-4 w-4" />, text: t("light") };
+        return <Sun className="h-[1.2rem] w-[1.2rem]" />;
       case "dark":
-        return { icon: <Moon className="h-4 w-4" />, text: t("dark") };
+        return <Moon className="h-[1.2rem] w-[1.2rem]" />;
       case "system":
       default:
-        return { icon: <Monitor className="h-4 w-4" />, text: t("system") };
+        return <Monitor className="h-[1.2rem] w-[1.2rem]" />;
     }
   };
 
-  const { icon, text } = getThemeInfo();
-
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="w-[110px] justify-between h-9 px-3 py-2"
-        >
-          <div className="flex items-center gap-2">
-            {icon}
-            <span>{text}</span>
-          </div>
-          <ChevronDown
-            className={cn(
-              "h-4 w-4 transition-transform",
-              isOpen ? "rotate-180" : "rotate-0"
-            )}
-          />
+        <Button variant="ghost" size="icon" className="px-3">
+          {getThemeIcon()}
+          <span className="sr-only">{t("toggleTheme")}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
+      <DropdownMenuContent align="end">
         <DropdownMenuItem
           onClick={() => setTheme("light")}
-          className={cn(
-            "flex items-center gap-2 cursor-pointer",
-            theme === "light" ? "bg-accent" : ""
-          )}
+          className="flex items-center gap-2 cursor-pointer"
         >
           <Sun className="h-4 w-4" />
           <span>{t("light")}</span>
@@ -73,10 +56,7 @@ export function ModeToggle() {
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("dark")}
-          className={cn(
-            "flex items-center gap-2 cursor-pointer",
-            theme === "dark" ? "bg-accent" : ""
-          )}
+          className="flex items-center gap-2 cursor-pointer"
         >
           <Moon className="h-4 w-4" />
           <span>{t("dark")}</span>
@@ -84,10 +64,7 @@ export function ModeToggle() {
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("system")}
-          className={cn(
-            "flex items-center gap-2 cursor-pointer",
-            theme === "system" ? "bg-accent" : ""
-          )}
+          className="flex items-center gap-2 cursor-pointer"
         >
           <Monitor className="h-4 w-4" />
           <span>{t("system")}</span>

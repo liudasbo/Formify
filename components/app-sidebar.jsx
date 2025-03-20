@@ -72,11 +72,6 @@ export function AppSidebar({ ...props }) {
         icon: Home,
       },
       {
-        title: t("settings"),
-        url: "/settings",
-        icon: Settings2,
-      },
-      {
         title: "Browse forms",
         url: "/browse/forms",
         icon: Search,
