@@ -87,7 +87,7 @@ export function CommandDialog() {
         <DialogTitle className="sr-only">Search Templates</DialogTitle>
         <Command className="rounded-lg border shadow-md">
           <CommandInput
-            placeholder="Search templates..."
+            placeholder="Search forms..."
             onValueChange={setSearchTerm}
           />
 
@@ -95,12 +95,12 @@ export function CommandDialog() {
             <div className="py-6 text-center">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mx-auto" />
               <p className="text-sm text-muted-foreground mt-2">
-                Searching templates...
+                Searching forms...
               </p>
             </div>
           ) : templatesData.length > 0 ? (
             <CommandList>
-              <CommandGroup heading="Templates">
+              <CommandGroup heading="Forms">
                 {templatesData.map((template) => (
                   <CommandItem
                     key={template.id}
@@ -164,12 +164,12 @@ export function CommandDialog() {
                 <CommandItem
                   className="cursor-pointer"
                   onSelect={() => {
-                    router.push(`/templates`);
+                    router.push(`/browse/forms`);
                     setOpen(false);
                   }}
                 >
                   <Search className="mr-2 h-4 w-4" />
-                  <span>Browse all templates</span>
+                  <span>Browse all forms</span>
                 </CommandItem>
 
                 <CommandItem
@@ -187,24 +187,24 @@ export function CommandDialog() {
           ) : searchTerm.length > 0 ? (
             <CommandEmpty className="py-6 text-center">
               <p className="text-sm text-muted-foreground">
-                No templates found for "{searchTerm}"
+                No forms found for "{searchTerm}"
               </p>
               <Button
                 variant="link"
                 className="mt-2"
                 onClick={() => {
-                  router.push(`/templates`);
+                  router.push(`/browse/forms`);
                   setOpen(false);
                 }}
               >
-                Browse all templates
+                Browse all forms
               </Button>
             </CommandEmpty>
           ) : (
             <div className="py-6 text-center">
               <Search className="h-6 w-6 text-muted-foreground mx-auto" />
               <p className="text-sm text-muted-foreground mt-2">
-                Type to search templates...
+                Type to search forms...
               </p>
             </div>
           )}

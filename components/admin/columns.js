@@ -2,8 +2,39 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, Shield, ShieldAlert, Lock, Unlock } from "lucide-react";
+import { format } from "date-fns";
 
 export const getColumns = (handleToggleAdmin, handleToggleBlock) => [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "name",
     header: "Name",
@@ -14,16 +45,53 @@ export const getColumns = (handleToggleAdmin, handleToggleBlock) => [
   {
     accessorKey: "email",
     header: "Email",
+    cell: ({ row }) => {
+      const email = row.getValue("email");
+      return (
+        <div className="truncate max-w-[80px] sm:max-w-[200px]">{email}</div>
+      );
+    },
   },
   {
     accessorKey: "isAdmin",
     header: "Role",
     cell: ({ row }) => {
-      const isAdmin = row.getValue("isAdmin");
+      const user = row.original;
+      const isAdmin = user.isAdmin;
+
       return (
-        <Badge variant={isAdmin ? "default" : "secondary"}>
-          {isAdmin ? "Admin" : "User"}
-        </Badge>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild disabled={user.isBlocked}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 flex items-center gap-1 font-normal"
+            >
+              {isAdmin ? "Admin" : "User"}
+
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem
+              onClick={() => handleToggleAdmin(user.id)}
+              className="flex items-center gap-2"
+              disabled={user.isBlocked}
+            >
+              {isAdmin ? (
+                <>
+                  <Shield className="h-4 w-4" />
+                  <span>Change to User</span>
+                </>
+              ) : (
+                <>
+                  <ShieldAlert className="h-4 w-4" />
+                  <span>Make Admin</span>
+                </>
+              )}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },
@@ -31,43 +99,55 @@ export const getColumns = (handleToggleAdmin, handleToggleBlock) => [
     accessorKey: "isBlocked",
     header: "Status",
     cell: ({ row }) => {
-      const isBlocked = row.getValue("isBlocked");
+      const user = row.original;
+      const isBlocked = user.isBlocked;
 
       return (
-        <Badge variant={isBlocked ? "destructive" : "outline"}>
-          {isBlocked ? "Blocked" : "Active"}
-        </Badge>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 flex items-center gap-1 font-normal"
+            >
+              {isBlocked ? (
+                <span className="text-destructive">Blocked</span>
+              ) : (
+                <span>Active</span>
+              )}
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem
+              onClick={() => handleToggleBlock(user.id)}
+              className="flex items-center gap-2"
+            >
+              {isBlocked ? (
+                <>
+                  <Unlock className="h-4 w-4" />
+                  <span>Unblock User</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="h-4 w-4" />
+                  <span>Block User</span>
+                </>
+              )}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },
   {
     accessorKey: "createdAt",
-    header: "Joined",
-    cell: ({ row }) => new Date(row.getValue("createdAt")).toLocaleDateString(),
-  },
-  {
-    id: "actions",
-    header: "Actions",
+    header: () => <span className="hidden lg:inline">Joined</span>,
     cell: ({ row }) => {
-      const user = row.original;
+      const date = new Date(row.getValue("createdAt"));
       return (
-        <div className="flex flex-col sm:flex-row gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleToggleAdmin(user.id)}
-            disabled={user.isBlocked}
-          >
-            {user.isAdmin ? "Remove Admin" : "Make Admin"}
-          </Button>
-
-          <Button
-            variant={user.isBlocked ? "outline" : "destructive"}
-            size="sm"
-            onClick={() => handleToggleBlock(user.id)}
-          >
-            {user.isBlocked ? "Unblock" : "Block"}
-          </Button>
+        <div className="hidden lg:block text-muted-foreground">
+          {format(date, "MMM d, yyyy HH:mm")}
         </div>
       );
     },

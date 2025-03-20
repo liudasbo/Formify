@@ -3,17 +3,28 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { getColumns } from "./columns";
 import { DataTable } from "./data-table";
 import Loading from "../Loading";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export function UserDataTable() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [rowSelection, setRowSelection] = useState({});
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -114,11 +125,62 @@ export function UserDataTable() {
     }
   };
 
+  const handleDelete = async () => {
+    // Check if any users are selected
+    if (Object.keys(rowSelection).length === 0) {
+      toast.error("No users selected");
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      // Get the IDs of selected users
+      const selectedUserIds = Object.keys(rowSelection).map(
+        (index) => filteredUsers[parseInt(index)].id
+      );
+
+      // Call the API to delete the selected users
+      const response = await fetch("/api/users/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userIds: selectedUserIds }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete users");
+      }
+
+      // Remove the deleted users from the state
+      const updatedUsers = users.filter(
+        (user) => !selectedUserIds.includes(user.id)
+      );
+      setUsers(updatedUsers);
+      setRowSelection({}); // Clear selection
+
+      toast.success("Success", {
+        description: `${selectedUserIds.length} user(s) deleted successfully`,
+      });
+    } catch (error) {
+      console.error("Error deleting users:", error);
+      toast.error("Error deleting users", {
+        description: error.message,
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    }
+  };
+
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const selectedCount = Object.keys(rowSelection).length;
 
   if (loading) {
     return <Loading />;
@@ -138,21 +200,66 @@ export function UserDataTable() {
   const columns = getColumns(handleToggleAdmin, handleToggleBlock);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Users ({users.length})</h2>
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search users..."
-            className="pl-8"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-between">
+        <Input
+          className="w-auto text-sm"
+          placeholder="Search users..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+
+        <div>
+          <Button
+            variant="outline"
+            onClick={() => setShowDeleteDialog(true)}
+            disabled={selectedCount === 0}
+          >
+            <Trash2 />
+            Delete {selectedCount > 0 ? `(${selectedCount})` : ""}
+          </Button>
         </div>
       </div>
+      <DataTable
+        columns={columns}
+        data={filteredUsers}
+        rowSelection={rowSelection}
+        setRowSelection={setRowSelection}
+      />
 
-      <DataTable columns={columns} data={filteredUsers} />
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action will permanently delete {selectedCount} user(s) and
+              cannot be undone. All associated data will also be lost.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

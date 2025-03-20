@@ -54,7 +54,7 @@ export function AppSidebar({ ...props }) {
 
   if (session?.user?.isAdmin) {
     userMenuItems.push({
-      title: "Admin",
+      title: "Admin dashboard",
       url: "/admin",
       icon: UserRoundCog,
     });

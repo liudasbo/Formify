@@ -165,7 +165,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      <Tabs defaultValue="myTemplates" className="w-full">
+      <Tabs defaultValue="myTemplates" className="w-full m-0">
         <TabsList className="w-full">
           <TabsTrigger
             value="myTemplates"
