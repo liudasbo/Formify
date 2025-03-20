@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import TemplateBuilder from "@/components/templateBuilder/template-builder";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, Trash2, BarChart4, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { AnswersTable } from "@/components/templateAnswersTable/answersTable";
@@ -16,9 +16,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import FormStatistics from "@/components/formStatistics";
 
 export default function EditTemplate() {
   const [templateData, setTemplateData] = useState({});
+  const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isUpdateBtnLoading, setIsUpdateBtnLoading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -34,23 +36,26 @@ export default function EditTemplate() {
   const id = params.templateId;
 
   useEffect(() => {
-    async function fetchTemplateData() {
+    async function fetchData() {
       try {
-        const res = await fetch(`/api/template/${id}`);
+        setLoading(true);
+        const res = await fetch(`/api/template/statistics/${id}`);
         if (!res.ok) {
-          throw new Error("Error fetching form");
+          throw new Error("Error fetching data");
         }
         const data = await res.json();
-        setTemplateData(data);
+
+        setFormData(data);
+        setTemplateData(data.template);
       } catch (err) {
-        console.error("Error", err.message);
+        console.error("Error fetching data:", err.message);
       } finally {
         setLoading(false);
       }
     }
 
     if (id) {
-      fetchTemplateData();
+      fetchData();
     }
   }, [id]);
 
@@ -82,13 +87,14 @@ export default function EditTemplate() {
 
     if (response.ok) {
       const result = await response.json();
-      console.log(result.message);
       setIsUpdateBtnLoading(false);
       toast("Template updated successfully!", { type: "success" });
       router.push(`/form/${id}`);
     } else {
       const error = await response.json();
       console.error("Update error:", error.error);
+      setIsUpdateBtnLoading(false);
+      toast.error("Failed to update template");
     }
   };
 
@@ -118,7 +124,7 @@ export default function EditTemplate() {
     }
   };
 
-  if (status === "loading") {
+  if (status === "loading" || loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -127,42 +133,36 @@ export default function EditTemplate() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-6 sm:flex-row sm:justify-between">
-        <div>
-          <h3 className="scroll-m-20 text-lg font-semibold tracking-tight first:mt-0">
-            Edit your template
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Make changes to your template to fit your needs.
-          </p>
-        </div>
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleUpdate}
+          className="w-full sm:w-auto"
+        >
+          {isUpdateBtnLoading ? (
+            <>
+              <Loader2 className="animate-spin mr-2" />
+              Loading...
+            </>
+          ) : (
+            <>
+              <Save />
+              Update Template
+            </>
+          )}
+        </Button>
 
-        <div className="flex gap-2 items-start justify-start">
-          <Button
-            type="button"
-            onClick={handleUpdate}
-            className="w-full sm:w-auto"
-          >
-            {isUpdateBtnLoading ? (
-              <>
-                <Loader2 className="animate-spin" />
-                Loading...
-              </>
-            ) : (
-              "Update"
-            )}
-          </Button>
-
-          <Button
-            onClick={openDeleteDialog}
-            variant="destructive"
-            type="button"
-            className="w-full sm:w-auto"
-          >
-            <Trash2 />
-          </Button>
-        </div>
+        <Button
+          onClick={openDeleteDialog}
+          variant="outline"
+          type="button"
+          className="w-full sm:w-auto"
+        >
+          <Trash2 />
+          Delete
+        </Button>
       </div>
 
       <Tabs defaultValue="template" className="w-full">
@@ -180,6 +180,12 @@ export default function EditTemplate() {
             Results
           </TabsTrigger>
           <TabsTrigger
+            value="statistics"
+            className="w-full data-[state=active]:font-bold"
+          >
+            Statistics
+          </TabsTrigger>
+          <TabsTrigger
             value="settings"
             className="w-full data-[state=active]:font-bold"
           >
@@ -194,6 +200,9 @@ export default function EditTemplate() {
         </TabsContent>
         <TabsContent value="results">
           <AnswersTable templateId={id} />
+        </TabsContent>
+        <TabsContent value="statistics">
+          <FormStatistics form={formData} />
         </TabsContent>
         <TabsContent value="settings">Settings</TabsContent>
       </Tabs>
@@ -210,7 +219,7 @@ export default function EditTemplate() {
               removed.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="flex gap-2">
             <Button
               variant="outline"
               onClick={() => setIsDeleteDialogOpen(false)}

@@ -102,7 +102,7 @@ export default function FormQuestionItem({ question, answer, onAnswerChange }) {
           <div>
             <Textarea
               placeholder="Your answer"
-              className="min-h-[100px] max-w-md focus-visible:ring-1"
+              className="min-h-[100px] w-full focus-visible:ring-1"
               value={answer || ""}
               onChange={(e) => handleChange(e.target.value)}
             />
